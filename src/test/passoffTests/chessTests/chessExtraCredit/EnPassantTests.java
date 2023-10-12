@@ -42,7 +42,7 @@ public class EnPassantTests {
 
         //white pawn
         ChessPiece pawn = TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        ChessPosition position = TestFactory.getNewPosition(5, 2);
+        ChessPositionImpl position = TestFactory.getNewPosition(5, 2);
         chessBoard.addPiece(position, pawn);
 
         //black pawn that will double move
@@ -68,7 +68,7 @@ public class EnPassantTests {
          */
 
         //make sure pawn has En Passant move
-        ChessMove enPassantMove =
+        ChessMoveImpl enPassantMove =
                 TestFactory.getNewMove(TestFactory.getNewPosition(5, 2), TestFactory.getNewPosition(6, 3), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
@@ -105,7 +105,7 @@ public class EnPassantTests {
 
         //white pawn
         ChessPiece pawn = TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        ChessPosition position = TestFactory.getNewPosition(5, 4);
+        ChessPositionImpl position = TestFactory.getNewPosition(5, 4);
         chessBoard.addPiece(position, pawn);
 
         //black pawn that will double move
@@ -131,7 +131,7 @@ public class EnPassantTests {
          */
 
         //make sure pawn has En Passant move
-        ChessMove enPassantMove =
+        ChessMoveImpl enPassantMove =
                 TestFactory.getNewMove(TestFactory.getNewPosition(5, 4), TestFactory.getNewPosition(6, 3), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
@@ -168,7 +168,7 @@ public class EnPassantTests {
 
         //black pawn
         ChessPiece pawn = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        ChessPosition position = TestFactory.getNewPosition(4, 6);
+        ChessPositionImpl position = TestFactory.getNewPosition(4, 6);
         chessBoard.addPiece(position, pawn);
 
         //white pawn that will double move
@@ -194,7 +194,7 @@ public class EnPassantTests {
          */
 
         //make sure pawn has En Passant move
-        ChessMove enPassantMove =
+        ChessMoveImpl enPassantMove =
                 TestFactory.getNewMove(TestFactory.getNewPosition(4, 6), TestFactory.getNewPosition(3, 7), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
@@ -231,7 +231,7 @@ public class EnPassantTests {
 
         //Black pawn
         ChessPiece pawn = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        ChessPosition position = TestFactory.getNewPosition(4, 8);
+        ChessPositionImpl position = TestFactory.getNewPosition(4, 8);
         chessBoard.addPiece(position, pawn);
 
         //white pawn that will double move
@@ -257,7 +257,7 @@ public class EnPassantTests {
          */
 
         //make sure pawn has En Passant move
-        ChessMove enPassantMove =
+        ChessMoveImpl enPassantMove =
                 TestFactory.getNewMove(TestFactory.getNewPosition(4, 8), TestFactory.getNewPosition(3, 7), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
@@ -294,7 +294,7 @@ public class EnPassantTests {
 
         //white pawn on board
         ChessPiece pawn = TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        ChessPosition position = TestFactory.getNewPosition(5, 2);
+        ChessPositionImpl position = TestFactory.getNewPosition(5, 2);
         chessBoard.addPiece(position, pawn);
 
         //black pawn that double moves

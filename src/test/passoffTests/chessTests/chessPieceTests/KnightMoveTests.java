@@ -14,8 +14,8 @@ public class KnightMoveTests {
 
     private ChessBoard board;
     private ChessPiece knight;
-    private ChessPosition position;
-    private Set<ChessMove> validMoves;
+    private ChessPositionImpl position;
+    private Set<ChessMoveImpl> validMoves;
 
     @BeforeEach
     public void setup() {
@@ -52,7 +52,7 @@ public class KnightMoveTests {
         validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(4, 3), null));
 
 
-        Set<ChessMove> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
         Assertions.assertEquals(validMoves, pieceMoves,
                 "ChessPiece pieceMoves did not return the correct moves");
 
@@ -101,7 +101,7 @@ public class KnightMoveTests {
         validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(3, 3), null));
         validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(5, 3), null));
 
-        Set<ChessMove> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
         Assertions.assertEquals(validMoves, pieceMoves,
                 "ChessPiece pieceMoves did not return the correct moves");
 
@@ -213,7 +213,7 @@ public class KnightMoveTests {
         validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(2, 6), null));
         validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(3, 7), null));
 
-        Set<ChessMove> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
         Assertions.assertEquals(validMoves, pieceMoves,
                 "ChessPiece pieceMoves did not return the correct moves");
 
@@ -317,7 +317,7 @@ public class KnightMoveTests {
         board.addPiece(position, knight);
 
         //add pieces
-        ChessPosition[] allyPiecePositions =
+        ChessPositionImpl[] allyPiecePositions =
                 {TestFactory.getNewPosition(6, 7), TestFactory.getNewPosition(7, 4), TestFactory.getNewPosition(4, 3)};
 
         board.addPiece(allyPiecePositions[0],
@@ -328,11 +328,11 @@ public class KnightMoveTests {
                 TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
 
 
-        Set<ChessMove> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
 
         //Cannot capture friendlies
-        for (ChessPosition allyPiece : allyPiecePositions) {
-            ChessMove badCapture = TestFactory.getNewMove(position, allyPiece, null);
+        for (ChessPositionImpl allyPiece : allyPiecePositions) {
+            ChessMoveImpl badCapture = TestFactory.getNewMove(position, allyPiece, null);
             Assertions.assertFalse(pieceMoves.contains(badCapture),
                     "Piece moves contained invalid move: " + badCapture + " that would capture a ally piece");
         }
@@ -369,7 +369,7 @@ public class KnightMoveTests {
         board.addPiece(position, knight);
 
         //add pieces
-        ChessPosition[] enemyPiecePositions =
+        ChessPositionImpl[] enemyPiecePositions =
                 {TestFactory.getNewPosition(3, 4), TestFactory.getNewPosition(3, 6), TestFactory.getNewPosition(4, 3)};
         board.addPiece(enemyPiecePositions[0],
                 TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
@@ -379,18 +379,18 @@ public class KnightMoveTests {
                 TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
 
         //Get moves for knight
-        Set<ChessMove> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(knight.pieceMoves(board, position));
 
         //Can capture unfriendlies
-        for (ChessPosition enemyPiece : enemyPiecePositions) {
-            ChessMove capture = TestFactory.getNewMove(position, enemyPiece, null);
+        for (ChessPositionImpl enemyPiece : enemyPiecePositions) {
+            ChessMoveImpl capture = TestFactory.getNewMove(position, enemyPiece, null);
             Assertions.assertTrue(pieceMoves.contains(capture),
                     "Piece moves did not contain valid move: " + capture + " that would capture an enemy piece");
             validMoves.add(capture);
         }
 
         //capture moves
-        for (ChessPosition enemyPiecePosition : enemyPiecePositions) {
+        for (ChessPositionImpl enemyPiecePosition : enemyPiecePositions) {
             validMoves.add(TestFactory.getNewMove(position, enemyPiecePosition, null));
         }
 

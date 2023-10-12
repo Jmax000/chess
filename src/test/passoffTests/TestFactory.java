@@ -1,6 +1,7 @@
 package passoffTests;
 
 import chess.*;
+import chess.chessPieces.*;
 
 /**
  * Used for testing your code
@@ -10,29 +11,28 @@ public class TestFactory {
 
     //Chess Functions
     //------------------------------------------------------------------------------------------------------------------
-    public static ChessBoard getNewBoard(){
-        // FIXME
-		return null;
+    public static ChessBoard getNewBoard(){ return new ChessBoardImpl(); }
+
+    public static ChessGame getNewGame(){ return new ChessGameImpl(); }
+
+    public static ChessPiece getNewPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type)
+    {
+		if (type == ChessPiece.PieceType.KING) { return new King(pieceColor); }
+        else if (type == ChessPiece.PieceType.QUEEN) { return new Queen(pieceColor); }
+        else if (type == ChessPiece.PieceType.BISHOP) { return new Bishop(pieceColor); }
+        else if (type == ChessPiece.PieceType.KNIGHT) { return new Knight(pieceColor); }
+        else if (type == ChessPiece.PieceType.ROOK) { return new Rook(pieceColor); }
+        else { return new Pawn(pieceColor); }
     }
 
-    public static ChessGame getNewGame(){
-        // FIXME
-		return null;
+    public static ChessPositionImpl getNewPosition(Integer row, Integer col)
+    {
+        return new ChessPositionImpl(row - 1, col - 1);
     }
 
-    public static ChessPiece getNewPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type){
-        // FIXME
-		return null;
-    }
-
-    public static ChessPosition getNewPosition(Integer row, Integer col){
-        // FIXME
-		return null;
-    }
-
-    public static ChessMove getNewMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece){
-        // FIXME
-		return null;
+    public static ChessMoveImpl getNewMove(ChessPositionImpl startPosition, ChessPositionImpl endPosition, ChessPiece.PieceType promotionPiece)
+    {
+		return new ChessMoveImpl(startPosition, endPosition, promotionPiece);
     }
     //------------------------------------------------------------------------------------------------------------------
 

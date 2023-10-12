@@ -18,7 +18,7 @@ import passoffTests.TestFactory;
 public class CastlingTests {
 
     private ChessBoard board;
-    private ChessPosition position;
+    private ChessPositionImpl position;
     private ChessPiece king;
 
     @BeforeEach
@@ -59,9 +59,9 @@ public class CastlingTests {
         game.setTeamTurn(ChessGame.TeamColor.WHITE);
 
         //check that with nothing in way, king can castle
-        ChessMove queenSide = TestFactory.getNewMove(TestFactory.getNewPosition(1, 5),
+        ChessMoveImpl queenSide = TestFactory.getNewMove(TestFactory.getNewPosition(1, 5),
                         TestFactory.getNewPosition(1, 3), null);
-        ChessMove kingSide = TestFactory.getNewMove(TestFactory.getNewPosition(1, 5),
+        ChessMoveImpl kingSide = TestFactory.getNewMove(TestFactory.getNewPosition(1, 5),
                         TestFactory.getNewPosition(1, 7), null);
 
         Assertions.assertTrue(game.validMoves(position).contains(queenSide),
@@ -165,9 +165,9 @@ public class CastlingTests {
         game.setTeamTurn(ChessGame.TeamColor.BLACK);
 
         //check that with nothing in way, king can castle
-        ChessMove queenSide = TestFactory.getNewMove(TestFactory.getNewPosition(8, 5),
+        ChessMoveImpl queenSide = TestFactory.getNewMove(TestFactory.getNewPosition(8, 5),
                 TestFactory.getNewPosition(8, 3), null);
-        ChessMove kingSide = TestFactory.getNewMove(TestFactory.getNewPosition(8, 5),
+        ChessMoveImpl kingSide = TestFactory.getNewMove(TestFactory.getNewPosition(8, 5),
                 TestFactory.getNewPosition(8, 7), null);
 
         Assertions.assertTrue(game.validMoves(position).contains(queenSide),
