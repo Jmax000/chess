@@ -5,6 +5,12 @@ public class User {
     String password;
     String email;
 
+    /**
+     * Constructor for a User obj
+     * @param username given by the user
+     * @param password given by the user
+     * @param email given by the user
+     */
     User(String username, String password, String email)
     {
         this.username = username;

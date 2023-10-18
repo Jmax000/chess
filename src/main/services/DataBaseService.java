@@ -2,6 +2,8 @@ package services;
 
 public class DataBaseService
 {
-    //Clears the database. Removes all users, games, and authTokens.
-    public ClearApplicationResult clearApplication(ClearApplicationRequest request) { return null; }
+    /**
+     * Clears the database. Removes all users, games, and authTokens.
+     */
+    public void clearApplication() {}
 }

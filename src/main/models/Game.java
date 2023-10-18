@@ -11,7 +11,12 @@ public class Game
     private String gameName;
     private ChessGameImpl game;
 
-    Game(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGameImpl game)
+    /**
+     * Constructor for the game obj
+     * Creates a gameID and game object
+     * @param gameName specified by the client
+     */
+    Game(String whiteUsername, String blackUsername, String gameName)
     {
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;

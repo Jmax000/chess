@@ -5,9 +5,12 @@ public class Authtoken
     private String authToken;
     private String username;
 
-    public Authtoken(String authToken, String username)
+    /**
+     * Constructor for Authtoken
+     * @param username - Creates an Authtoken from the username
+     */
+    public Authtoken(String username)
     {
-        this.authToken = authToken;
         this.username = username;
     }
 
