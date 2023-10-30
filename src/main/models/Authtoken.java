@@ -1,8 +1,11 @@
 package models;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 public class Authtoken
 {
-    private String authToken;
+    private String token;
     private String username;
 
     /**
@@ -12,10 +15,12 @@ public class Authtoken
     public Authtoken(String username)
     {
         this.username = username;
+        String randomPart = Base64.getEncoder().encodeToString(new SecureRandom().generateSeed(16));
+        token = username + "-" + randomPart;
     }
 
-    public String getAuthToken() { return authToken; }
+    public String getToken() { return token; }
     public String getUsername() { return username; }
-    public void setAuthToken(String authToken) { this.authToken = authToken; }
+    public void setToken(String token) { this.token = token; }
     public void setUsername(String username) { this.username = username; }
 }

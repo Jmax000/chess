@@ -11,7 +11,7 @@ public class User {
      * @param password given by the user
      * @param email given by the user
      */
-    User(String username, String password, String email)
+    public User(String username, String password, String email)
     {
         this.username = username;
         this.password = password;

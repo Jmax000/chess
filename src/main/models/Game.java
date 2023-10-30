@@ -16,21 +16,21 @@ public class Game
      * Creates a gameID and game object
      * @param gameName specified by the client
      */
-    Game(String whiteUsername, String blackUsername, String gameName)
+    public Game(int gameID, String gameName)
     {
         this.gameID = gameID;
-        this.whiteUsername = whiteUsername;
-        this.blackUsername = blackUsername;
+        this.whiteUsername = null;
+        this.blackUsername = null;
         this.gameName = gameName;
-        this.game = game;
+        this.game = new ChessGameImpl();
     }
 
     public int getGameID() { return gameID; }
     public void setGameID(int gameID) { this.gameID = gameID; }
     public String getWhiteUsername() { return whiteUsername; }
-    public void setWhiteUsername(int gameID) { this.whiteUsername = whiteUsername; }
+    public void setWhiteUsername(String whiteUsername) { this.whiteUsername = whiteUsername; }
     public String getBlackUsername() { return blackUsername; }
-    public void setBlackUsername(int gameID) { this.blackUsername = blackUsername; }
+    public void setBlackUsername(String blackUsername) { this.blackUsername = blackUsername; }
     public String getGameName() { return gameName; }
     public void setGameName(String gameName) { this.gameName = gameName; }
     public ChessGameImpl getGame() { return game; }
