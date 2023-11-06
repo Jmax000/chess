@@ -1,4 +1,4 @@
-package database;
+package dataAccess;
 
 import models.Authtoken;
 import models.Game;

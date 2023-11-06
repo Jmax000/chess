@@ -1,14 +1,14 @@
 package passoffTests.serverTests;
 
+        import chess.ChessGameImpl;
         import dataAccess.*;
-        import database.*;
         import requestResultObjects.*;
         import services.*;
         import models.*;
         import org.junit.jupiter.api.*;
         import java.util.Vector;
 
-public class MyTests {
+public class TestsPhase3 {
 
     User validUser1;
     User validUser2;
@@ -49,10 +49,10 @@ public class MyTests {
     public void testListGamesValid()
     {
         GameService gameService = new GameService();
-        Game validGame1 = new Game(1, "gameName");
-        Game validGame2 = new Game(2, "gameName");
-        Game validGame3 = new Game(3, "gameName");
-        Game validGame4 = new Game(4, "gameName");
+        Game validGame1 = new Game(1, "username1", "username2", "gameName", new ChessGameImpl());
+        Game validGame2 = new Game(2, "username1", "username2", "gameName", new ChessGameImpl());
+        Game validGame3 = new Game(3, "username1", "username2", "gameName", new ChessGameImpl());
+        Game validGame4 = new Game(4, "username1", "username2", "gameName", new ChessGameImpl());
 
         LocalDatabase.addGame(validGame1);
         LocalDatabase.addGame(validGame2);
@@ -66,10 +66,10 @@ public class MyTests {
     public void testListGamesInvalid()
     {
         GameService gameService = new GameService();
-        Game validGame1 = new Game(1, "gameName");
-        Game validGame2 = new Game(2, "gameName");
-        Game validGame3 = new Game(3, "gameName");
-        Game validGame4 = new Game(4, "gameName");
+        Game validGame1 = new Game(1, "username1", "username2", "gameName", new ChessGameImpl());
+        Game validGame2 = new Game(2, "username1", "username2", "gameName", new ChessGameImpl());
+        Game validGame3 = new Game(3, "username1", "username2", "gameName", new ChessGameImpl());
+        Game validGame4 = new Game(4, "username1", "username2", "gameName", new ChessGameImpl());
 
         LocalDatabase.addGame(validGame1);
         LocalDatabase.addGame(validGame2);
@@ -83,8 +83,8 @@ public class MyTests {
     public void testJoinValid()
     {
         GameService gameService = new GameService();
-        Game vaildGame = new Game(1, "gameName");
-        LocalDatabase.addGame(vaildGame);
+        Game validGame = new Game(1, "username1", "username2", "gameName", new ChessGameImpl());
+        LocalDatabase.addGame(validGame);
 
         JoinGameRequest request = new JoinGameRequest();
         request.setGameID(1);
@@ -106,8 +106,8 @@ public class MyTests {
 
         Assertions.assertEquals(result.getMessage(), "Error: bad request", "message is not 'Error: bad request'");
 
-        Game vaildGame = new Game(1, "gameName");
-        LocalDatabase.addGame(vaildGame);
+        Game validGame = new Game(1, "username1", "username2", "gameName", new ChessGameImpl());
+        LocalDatabase.addGame(validGame);
         result = gameService.joinGame(request, "BAD_AUTHTOKEN");
 
         Assertions.assertEquals(result.getMessage(), "Error: unauthorized", "message is not 'Error: unauthorized'");

@@ -11,7 +11,6 @@ public class ChessBoardImpl implements ChessBoard
 
     private ChessPiece[][] board = new ChessPiece[BOARD_SIZE][BOARD_SIZE];
 
-    //public ChessBoardImpl() { resetBoard(); }
     @Override
     public void addPiece(ChessPositionImpl position, ChessPiece piece)
     {

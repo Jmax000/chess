@@ -15,8 +15,13 @@ public class Authtoken
     public Authtoken(String username)
     {
         this.username = username;
-        String randomPart = Base64.getEncoder().encodeToString(new SecureRandom().generateSeed(16));
-        token = username + "-" + randomPart;
+        token = Base64.getEncoder().encodeToString(new SecureRandom().generateSeed(16));
+    }
+
+    public Authtoken(String username, String token)
+    {
+        this.username = username;
+        this.token = token;
     }
 
     public String getToken() { return token; }

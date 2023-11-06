@@ -5,24 +5,33 @@ import chess.ChessGameImpl;
 
 public class Game
 {
-    private int gameID;
+    private Integer gameID;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
-    private ChessGameImpl game;
+    private ChessGame game;
 
     /**
      * Constructor for the game obj
      * Creates a gameID and game object
      * @param gameName specified by the client
      */
-    public Game(int gameID, String gameName)
+    public Game(String gameName)
     {
-        this.gameID = gameID;
+        this.gameID = null;
         this.whiteUsername = null;
         this.blackUsername = null;
         this.gameName = gameName;
         this.game = new ChessGameImpl();
+    }
+
+    public Game(Integer gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game)
+    {
+        this.gameID = gameID;
+        this.whiteUsername = whiteUsername;
+        this.blackUsername = blackUsername;
+        this.gameName = gameName;
+        this.game = game;
     }
 
     public int getGameID() { return gameID; }
@@ -33,6 +42,6 @@ public class Game
     public void setBlackUsername(String blackUsername) { this.blackUsername = blackUsername; }
     public String getGameName() { return gameName; }
     public void setGameName(String gameName) { this.gameName = gameName; }
-    public ChessGameImpl getGame() { return game; }
+    public ChessGame getGame() { return game; }
     public void setGame(ChessGameImpl game) { this.game = game; }
 }

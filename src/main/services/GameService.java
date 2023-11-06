@@ -23,6 +23,12 @@ public class GameService
                 invalidGame.setMessage("Error: unauthorized");
                 return invalidGame;
             }
+            else if (request.getGameName() == null)
+            {
+                CreateGameResult invalidGame = new CreateGameResult();
+                invalidGame.setMessage("Error: bad request");
+                return invalidGame;
+            }
             else
             {
                 Game game = GameDAO.createGame(request.getGameName());
