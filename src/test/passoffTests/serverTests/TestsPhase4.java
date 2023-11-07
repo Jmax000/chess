@@ -14,7 +14,7 @@ import java.util.Vector;
 public class TestsPhase4
 {
     @BeforeEach
-    public void setUp() throws DataAccessException
+    public void setUp()
     {
         DataBaseService dataBaseService = new DataBaseService();
         dataBaseService.clearApplication();
