@@ -29,16 +29,12 @@ public class WebSocketFacade extends Endpoint
             this.session = container.connectToServer(this, socketURI);
 
             //set message handler
-            this.session.addMessageHandler(new MessageHandler.Whole<String>()
+            this.session.addMessageHandler((MessageHandler.Whole<String>) message ->
             {
-                @Override
-                public void onMessage(String message)
-                {
-                    var builder = new GsonBuilder();
-                    builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
-                    ServerMessage notification = builder.create().fromJson(message, ServerMessage.class);
-                    notificationHandler.notify(notification);
-                }
+                var builder = new GsonBuilder();
+                builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
+                ServerMessage notification = builder.create().fromJson(message, ServerMessage.class);
+                notificationHandler.notify(notification);
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());

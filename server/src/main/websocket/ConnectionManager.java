@@ -25,52 +25,16 @@ public class ConnectionManager {
 
     public void remove(int gameID, Session session)
     {
-        Vector<Connection> connections = connectedGames.get(gameID);
-        if (connections != null)
-        {
-            connections.remove(session);
-        }
+        connectedGames.get(gameID).remove(session);
     }
 
-    public void notify(int gameID, ServerMessage notification) throws IOException
+    public void broadcast(int gameID, ChessGame.TeamColor notify, ServerMessage notification) throws IOException
     {
         Vector<Connection> connections = connectedGames.get(gameID);
         for (var c : connections) {
             if (c.session.isOpen())
             {
-                c.send(new Gson().toJson(notification));
-            }
-            else
-            {
-                connections.remove(c);
-            }
-        }
-    }
-    public void notifyExcept(int gameID, Session exclude, ServerMessage notification) throws IOException
-    {
-        Vector<Connection> connections = connectedGames.get(gameID);
-        for (var c : connections) {
-            if (c.session.isOpen())
-            {
-                if (c.session != exclude)
-                {
-                    c.send(new Gson().toJson(notification));
-                }
-            }
-            else
-            {
-                connections.remove(c);
-            }
-        }
-    }
-    public void notifyTeam(int gameID, ChessGame.TeamColor notify, ServerMessage notification) throws IOException
-    {
-        Vector<Connection> connections = connectedGames.get(gameID);
-        for (var c : connections) {
-            if (c.session.isOpen())
-            {
-                if (c.teamColor == notify)
-                {
+                if (c.teamColor == notify) {
                     c.send(new Gson().toJson(notification));
                 }
             }
@@ -81,7 +45,7 @@ public class ConnectionManager {
         }
     }
 
-    public void notifyRoot(int gameID, Session session, ServerMessage notification) throws IOException
+    public void notify(int gameID, Session session, ServerMessage notification) throws IOException
     {
         Vector<Connection> connections = connectedGames.get(gameID);
         for (var c : connections) {
