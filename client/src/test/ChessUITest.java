@@ -1,8 +1,7 @@
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessGameImpl;
-import org.junit.jupiter.api.Assertions;
+import chess.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
 
 import static ui.ChessBoardUI.drawChessBoard;
 
@@ -13,6 +12,7 @@ public class ChessUITest
     {
         ChessGame game = new ChessGameImpl();
         game.getBoard().resetBoard();
-        System.out.print(drawChessBoard(game.getBoard(), ChessGame.TeamColor.WHITE));
+        Collection<ChessMove> moves = game.validMoves(new ChessPositionImpl(1, 0));
+        System.out.print(drawChessBoard(game.getBoard(), ChessGame.TeamColor.WHITE, moves));
     }
 }

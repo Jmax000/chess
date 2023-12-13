@@ -7,7 +7,8 @@ import java.util.Vector;
 
 public class Pawn implements ChessPiece
 {
-    private ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor teamColor;
+    public final PieceType pieceType = PieceType.PAWN;
     public Pawn(ChessGame.TeamColor teamColor) { this.teamColor = teamColor; }
     @Override
     public ChessGame.TeamColor getTeamColor() { return teamColor; }
@@ -16,19 +17,19 @@ public class Pawn implements ChessPiece
     public PieceType getPieceType() { return PieceType.PAWN; }
 
     @Override
-    public Collection<ChessMoveImpl> pieceMoves(ChessBoard board, ChessPositionImpl myPosition)
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
-        Collection<ChessMoveImpl> validMoves = new Vector<>();
+        Collection<ChessMove> validMoves = new Vector<>();
 
         if(teamColor == ChessGame.TeamColor.WHITE)
         {
             //Move up
-            ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getColumn());
+            ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getCol());
 
             //Pawn hasn't moved Check
             if (myPosition.getRow() == 1)
             {
-                ChessPositionImpl moveTwo = new ChessPositionImpl(myPosition.getRow() + 2, myPosition.getColumn());
+                ChessPosition moveTwo = new ChessPositionImpl(myPosition.getRow() + 2, myPosition.getCol());
                 if(moveTwo.validPos() && board.getPiece(nextPos) == null && board.getPiece(moveTwo) == null)
                 {
                     validMoves.add(new ChessMoveImpl(myPosition, moveTwo));
@@ -40,14 +41,14 @@ public class Pawn implements ChessPiece
             }
 
             //Take upRight
-            nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getColumn() + 1);
+            nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getCol() + 1);
             if(nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != teamColor && !checkPromotion(myPosition, nextPos, validMoves))
             {
                 validMoves.add(new ChessMoveImpl(myPosition, nextPos));
             }
 
             //Take upLeft
-            nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+            nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getCol() - 1);
             if(nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != teamColor && !checkPromotion(myPosition, nextPos, validMoves))
             {
                 validMoves.add(new ChessMoveImpl(myPosition, nextPos));
@@ -56,12 +57,12 @@ public class Pawn implements ChessPiece
         else
         {
             //Move Down
-            ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getColumn());
+            ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getCol());
 
             //Pawn hasn't moved Check
             if (myPosition.getRow() == 6)
             {
-                ChessPositionImpl moveTwo = new ChessPositionImpl(myPosition.getRow() - 2, myPosition.getColumn());
+                ChessPosition moveTwo = new ChessPositionImpl(myPosition.getRow() - 2, myPosition.getCol());
                 if(moveTwo.validPos() && board.getPiece(nextPos) == null && board.getPiece(moveTwo) == null)
                 {
                     validMoves.add(new ChessMoveImpl(myPosition, moveTwo));
@@ -74,14 +75,14 @@ public class Pawn implements ChessPiece
             }
 
             //Take DownRight
-            nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getColumn() + 1);
+            nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getCol() + 1);
             if(nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != teamColor && !checkPromotion(myPosition, nextPos, validMoves))
             {
                 validMoves.add(new ChessMoveImpl(myPosition, nextPos));
             }
 
             //Take DownLeft
-            nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getColumn() - 1);
+            nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getCol() - 1);
             if(nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != teamColor && !checkPromotion(myPosition, nextPos, validMoves))
             {
                 validMoves.add(new ChessMoveImpl(myPosition, nextPos));
@@ -91,7 +92,7 @@ public class Pawn implements ChessPiece
         return validMoves;
     }
 
-    private boolean checkPromotion(ChessPositionImpl myPosition, ChessPositionImpl nextPos, Collection<ChessMoveImpl> validMoves)
+    private boolean checkPromotion(ChessPosition myPosition, ChessPosition nextPos, Collection<ChessMove> validMoves)
     {
         if(nextPos.validPos() && nextPos.getRow() == 7 && teamColor == ChessGame.TeamColor.WHITE)
         {

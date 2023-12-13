@@ -4,7 +4,6 @@ import adapters.GameAdapter;
 import chess.ChessGame;
 import com.google.gson.GsonBuilder;
 import models.Game;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +26,8 @@ public class GameDAO
         Connection connection = db.getConnection();
 
         Game game = new Game(gameName);
-        //game.getGame().getBoard().resetBoard(); Why doesn't this serialize???? FIXME
+        game.getGame().getBoard().resetBoard();
+        game.getGame().setTeamTurn(ChessGame.TeamColor.WHITE);
 
         String sql = "insert into games (whiteUsername, blackUsername, gameName, game) values (?, ?, ?, ?)";
         try(PreparedStatement stmt = connection.prepareStatement(sql, RETURN_GENERATED_KEYS))
@@ -265,16 +265,18 @@ public class GameDAO
     {
         var builder = new GsonBuilder();
         builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
+        var serializer = builder.create();
 
-        return builder.create().fromJson(jsnStr, ChessGame.class);
+        return serializer.fromJson(jsnStr, ChessGame.class);
     }
 
     private static String serializeGame(ChessGame gameObj)
     {
         var builder = new GsonBuilder();
         builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
+        var serializer = builder.create();
 
-        return builder.create().toJson(gameObj);
+        return serializer.toJson(gameObj);
     }
 
 }

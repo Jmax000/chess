@@ -102,11 +102,7 @@ public class GameService
             else
             {
                 ListGameResult validListGame = new ListGameResult();
-                Vector<Game> gameList = new Vector<>();
-                if (GameDAO.findAll() != null)
-                {
-                    gameList = GameDAO.findAll();
-                }
+                Vector<Game> gameList = GameDAO.findAll();
                 validListGame.setGames(gameList);
                 return validListGame;
             }

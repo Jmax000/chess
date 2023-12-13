@@ -3,13 +3,14 @@ package webClient;
 import java.util.Arrays;
 import java.util.Vector;
 
-import chess.ChessGame;
+import chess.*;
 import exception.ResponseException;
 import models.Game;
 import requestResultObjects.*;
+import webSocketMessages.userCommands.*;
+import websocket.*;
 
 import static java.lang.Integer.parseInt;
-import static ui.ChessBoardUI.drawChessBoard;
 
 public class ChessClient
 {
@@ -18,14 +19,18 @@ public class ChessClient
     private Vector<Game> games = new Vector<>();
     private final ServerFacade server;
     private final String serverUrl;
+    private final NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
 
-    public State state = State.SIGNEDOUT;
+    record GameState(int gameID, ChessGame.TeamColor teamColor) {}
+    private GameState inGameState;
+    public State state = State.SIGNED_OUT;
 
-    public ChessClient(String serverUrl, Repl repl)
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler)
     {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-//        this.notificationHandler = notificationHandler;
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) throws ResponseException
@@ -33,18 +38,48 @@ public class ChessClient
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-        return switch (cmd)
+
+        return switch (state)
         {
-            case "register" -> register(params);
-            case "login" -> login(params);
-            case "create" -> createGame(params);
-            case "join", "observe" -> joinGame(params);
-            case "list" -> listGame();
-            case "logout" -> logout();
-            case "clear" -> clear();
-            case "help" -> help();
-            case "quit" -> "quit";
-            default -> invalidCmd();
+            case SIGNED_OUT:
+                yield switch (cmd)
+                {
+                    case "register" -> register(params);
+                    case "login" -> login(params);
+                    case "help" -> help();
+                    case "quit" -> "quit";
+                    default -> invalidCmd();
+                };
+            case SIGNED_IN:
+                yield switch (cmd)
+                {
+                    case "create" -> createGame(params);
+                    case "join", "observe" -> joinGame(params);
+                    case "list" -> listGame();
+                    case "logout" -> logout();
+                    case "help" -> help();
+                    case "quit" -> "quit";
+                    default -> invalidCmd();
+                };
+            case IN_GAME:
+                yield switch (cmd)
+                {
+                    case "draw_board", "draw" -> drawBoard();
+                    case "highlight_moves", "highlight" -> highlightMoves(params);
+                    case "resign" -> resign();
+                    case "leave" -> leave();
+                    case "instructions" -> instructions();
+                    case "help" -> help();
+                    default -> makeMove(cmd);
+                };
+            case OBSERVING:
+                yield switch (cmd)
+                {
+                    case "leave" -> leave();
+                    case "help" -> help();
+                    default -> invalidCmd();
+                };
+
         };
     }
 
@@ -61,7 +96,7 @@ public class ChessClient
             {
                 username = result.getUsername();
                 authtoken = result.getAuthToken();
-                state = State.SIGNEDIN;
+                state = State.SIGNED_IN;
 
                 return "Registered as " + username + ". \n";
             }
@@ -81,7 +116,7 @@ public class ChessClient
             {
                 username = result.getUsername();
                 authtoken = result.getAuthToken();
-                state = State.SIGNEDIN;
+                state = State.SIGNED_IN;
                 return "Logged in as "+  username + ". \n";
             }
         }
@@ -90,7 +125,6 @@ public class ChessClient
 
     public String createGame(String[] params) throws ResponseException
     {
-        assertSignedIn();
         if (params.length == 1) {
             CreateGameRequest request = new CreateGameRequest();
             request.setGameName(params[0]);
@@ -106,7 +140,6 @@ public class ChessClient
 
     public String listGame() throws ResponseException
     {
-        assertSignedIn();
         ListGameResult result = server.listGames(authtoken);
         games = result.getGames();
 
@@ -140,9 +173,18 @@ public class ChessClient
         }
     }
 
+    private Game findGame(String listNumber) throws ResponseException
+    {
+        int index = parseInt(listNumber) - 1;
+        if (index < games.size())
+        {
+            return games.get(index);
+        }
+        throw new ResponseException(400, "No game found. Try again.");
+    }
+
     public String joinGame(String[] params) throws ResponseException
     {
-        assertSignedIn();
         JoinGameRequest request = new JoinGameRequest();
         JoinGameResult result = null;
         Game game = null;
@@ -162,66 +204,169 @@ public class ChessClient
 
         if (game != null && result != null)
         {
-            StringBuilder gameJoined = new StringBuilder();
-            gameJoined.append("Joined ");
-            gameJoined.append(game.getGameName());
-            gameJoined.append(" as ");
-            if (request.getPlayerColor() == null || request.getPlayerColor().isEmpty())
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ChessGame.TeamColor color = null;
+            String team = request.getPlayerColor();
+            if (team != null)
             {
-                gameJoined.append("an observer.");
+                color = switch (team.toLowerCase())
+                {
+                    case "white" -> ChessGame.TeamColor.WHITE;
+                    case "black" -> ChessGame.TeamColor.BLACK;
+                    default -> null;
+                };
             }
-            else
-            {
-                gameJoined.append(request.getPlayerColor());
-                gameJoined.append(".");
-            }
-            game.getGame().getBoard().resetBoard(); // Temp FIXME
-            gameJoined.append("\n");
-            gameJoined.append(drawChessBoard(game.getGame().getBoard(), ChessGame.TeamColor.WHITE));
-            gameJoined.append("\n");
-            gameJoined.append(drawChessBoard(game.getGame().getBoard(), ChessGame.TeamColor.BLACK));
 
-            return gameJoined.toString();
+            if (team == null)
+            {
+                state = State.OBSERVING;
+                inGameState = new GameState(request.getGameID(), null);
+                UserGameCommand command = new UserGameCommand(authtoken);
+                command.setGameID(request.getGameID());
+                command.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
+                ws.sendMessage(command);
+                return "";
+            }
+            else if (color != null)
+            {
+                state = State.IN_GAME;
+                inGameState = new GameState(request.getGameID(), color);
+                UserGameCommand command = new UserGameCommand(authtoken);
+                command.setGameID(request.getGameID());
+                command.setTeamColor(color);
+                command.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
+                ws.sendMessage(command);
+                return "";
+            }
         }
         throw new ResponseException(400, "Expected: <ID> [WHITE | BLACK | <empty>]");
     }
 
-    private Game findGame(String listNumber) throws ResponseException
+    String makeMove(String cmd) throws ResponseException
     {
-        int index = parseInt(listNumber) - 1;
-        if (index < games.size())
+        ChessPosition startPosition = null;
+        ChessPosition endPosition = null;
+        ChessPiece.PieceType promoType = null;
+
+        if (cmd.length() == 5 && cmd.charAt(2) == '-')
         {
-            return games.get(index);
+            int row = Character.getNumericValue(cmd.charAt(1)) - 1;
+            int col = cmd.charAt(0) - 'a';
+            startPosition = new ChessPositionImpl(row, col);
+            row = Character.getNumericValue(cmd.charAt(4)) - 1;
+            col = cmd.charAt(3) - 'a';
+            endPosition = new ChessPositionImpl(row, col);
         }
-        throw new ResponseException(400, "No game found. Try again.");
+        else if (cmd.length() == 7 && cmd.charAt(2) == '-' && cmd.charAt(5) == '=')
+        {
+            promoType = switch (cmd.charAt(6))
+            {
+                case 'q' -> ChessPiece.PieceType.QUEEN;
+                case 'b' -> ChessPiece.PieceType.BISHOP;
+                case 'n' -> ChessPiece.PieceType.KNIGHT;
+                case 'r' -> ChessPiece.PieceType.ROOK;
+                default -> throw new ResponseException(400, cmd.charAt(6) + " is not an available promotion piece.");
+            };
+            int row = Character.getNumericValue(cmd.charAt(1)) - 1;
+            int col = cmd.charAt(0) - 'a';
+            startPosition = new ChessPositionImpl(row, col);
+            row = Character.getNumericValue(cmd.charAt(4)) - 1;
+            col = cmd.charAt(3) - 'a';
+            endPosition = new ChessPositionImpl(row, col);
+        }
+
+        if (startPosition != null)
+        {
+            UserGameCommand command = new UserGameCommand(authtoken);
+            command.setGameID(inGameState.gameID);
+            command.setTeamColor(inGameState.teamColor);
+            command.setMove(new ChessMoveImpl(startPosition, endPosition));
+            command.setPromoType(promoType);
+            command.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
+            ws.sendMessage(command);
+            return "";
+        }
+        throw new ResponseException(400, "Expected: letterNumber-letterNumber (example: a2-a1)");
+    }
+
+    String drawBoard() throws ResponseException
+    {
+        UserGameCommand command = new UserGameCommand(authtoken);
+        command.setGameID(inGameState.gameID);
+        command.setTeamColor(inGameState.teamColor);
+        command.setCommandType(UserGameCommand.CommandType.DRAW_BOARD);
+
+        ws.sendMessage(command);
+        return "";
+    }
+
+    private String highlightMoves(String[] params) throws ResponseException
+    {
+        if (params.length == 1 && params[0].length() == 2)
+        {
+            int row = Character.getNumericValue(params[0].charAt(1)) - 1;
+            int col = params[0].charAt(0) - 'a';
+            ChessPosition position = new ChessPositionImpl(row, col);
+            if (position.validPos())
+            {
+                UserGameCommand command = new UserGameCommand(authtoken);
+                command.setGameID(inGameState.gameID);
+                command.setTeamColor(inGameState.teamColor);
+                command.setHighlightPosition(position);
+                command.setCommandType(UserGameCommand.CommandType.DRAW_BOARD);
+
+                ws.sendMessage(command);
+                return "";
+            }
+        }
+        throw new ResponseException(400, "Expected: ROW_COLUMN (example: e1)");
+    }
+
+    String resign() throws ResponseException
+    {
+        UserGameCommand command = new UserGameCommand(authtoken);
+        command.setGameID(inGameState.gameID);
+        command.setCommandType(UserGameCommand.CommandType.RESIGN);
+        ws.sendMessage(command);
+
+        state = State.SIGNED_IN;
+        return "";
+    }
+
+    String leave() throws ResponseException
+    {
+        UserGameCommand command = new UserGameCommand(authtoken);
+        command.setGameID(inGameState.gameID);
+        command.setTeamColor(inGameState.teamColor);
+        command.setCommandType(UserGameCommand.CommandType.LEAVE);
+        ws.sendMessage(command);
+
+        state = State.SIGNED_IN;
+        return "";
     }
 
     public String logout() throws ResponseException
     {
-        assertSignedIn();
         server.logout(authtoken);
-        state = State.SIGNEDOUT;
+        state = State.SIGNED_OUT;
         authtoken = null;
         return "Logged out. \n";
     }
 
-    public String clear() throws ResponseException
-    {
-        logout();
-        server.clear();
-        return "Database cleared. \n";
-    }
-
     public String help()
     {
-        if (state == State.SIGNEDOUT) {
+        if (state == State.SIGNED_OUT)
+        {
+
             return """
                     - register <USERNAME> <PASSWORD> <EMAIL>
                     - login <USERNAME> <PASSWORD>
                     - quit
                     """;
         }
-        return """
+        else if (state == State.SIGNED_IN)
+        {
+            return """
                 - create <NAME>
                 - join <ID> [WHITE | BLACK | <empty>]
                 - observe <ID>
@@ -230,13 +375,77 @@ public class ChessClient
                 - help
                 - quit
                 """;
-    }
+        }
+        else if (state == State.IN_GAME)
+        {
 
-    private void assertSignedIn() throws ResponseException {
-        if (state == State.SIGNEDOUT) {
-            throw new ResponseException(400, "You must sign in");
+            return """
+            - <YOUR_MOVE>
+            - instructions
+            - resign
+            - leave
+            - help
+            """;
+        }
+        else
+        {
+            return """
+            - leave
+            - help
+            """;
         }
     }
+
+    private String instructions()
+    {
+        return """
+                Chess Game Instructions: How to Input Moves
+
+                Welcome to the text-based chess game! To make moves on the chessboard, we use a standard notation called algebraic notation. Follow these simple steps to input your moves:
+
+                Piece Abbreviations:
+                - King: K
+                - Queen: Q
+                - Rook: R
+                - Knight: N
+                - Bishop: B
+                - Pawn: (No abbreviation, just the coordinate of the destination square)
+                
+                File and Rank Coordinates:
+                - Files are labeled with letters from a to h, from left to right.
+                - Ranks are labeled with numbers from 1 to 8, from bottom to top.
+                
+                Notation for Moves:
+                - Each move is represented by the piece abbreviation followed by the destination square.
+                        Examples:
+                            - Pawn moves: e4 (moves pawn to e4)
+                            - Pawn promotion: e8=Q (promotes pawn to queen on e8)
+                            - Knight moves: Nf3 (moves knight to f3)
+                            - Bishop moves: Bb5 (moves bishop to b5)
+                            - Rook moves: Ra1 (moves rook to a1)
+                            - Queen moves: Qd4 (moves queen to d4)
+                            - King moves: Kg1 (moves king to g1)
+                - If there is ambiguity between pieces that can move to the same square, include the file or rank of the starting square.
+                        Examples:
+                            - Pawn moves: e2-e4 (moves pawn to e4)
+                            - Pawn promotion: e7-e8=Q (promotes pawn to queen on e8)
+                            - Knight moves: g1-f3 (moves knight to f3)
+                            - Bishop moves: f1-b5 (moves bishop to b5)
+                            - Rook moves: a8-a1 (moves rook to a1)
+                            - Queen moves: d1-d4 (moves queen to d4)
+                            - King moves: f1-g1 (moves king to g1)
+
+                Special Moves:
+                - Pawn promotion: e8=Q (promotes pawn to queen on e8)
+                - Castling: O-O (kingside) or O-O-O (queenside)
+                - En passant: exd6 (captures pawn en passant on d6)
+                
+                Entering a Move:
+                - To make a move, simply type the algebraic notation for your desired move and press enter.
+
+                Now that you're familiar with algebraic notation, go ahead and enjoy the game! If you have any questions, type "help" for assistance.""";
+    }
+
     private String invalidCmd()
     {
         return "Invalid Command. Type Help for a list of valid commands. \n";

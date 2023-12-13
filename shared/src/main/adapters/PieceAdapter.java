@@ -10,7 +10,7 @@ public class PieceAdapter implements JsonDeserializer<ChessPiece> {
     public ChessPiece deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException
     {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String pieceType = jsonObject.get("PieceType").getAsString();
+        String pieceType = jsonObject.get("pieceType").getAsString();
 
         if (pieceType.equals(ChessPiece.PieceType.QUEEN.toString()))
         {

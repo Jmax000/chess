@@ -2,6 +2,8 @@ package webClient;
 
 public enum State
 {
-    SIGNEDOUT,
-    SIGNEDIN
+    SIGNED_OUT,
+    SIGNED_IN,
+    IN_GAME,
+    OBSERVING
 }

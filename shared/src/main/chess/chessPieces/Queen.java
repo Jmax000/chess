@@ -7,7 +7,8 @@ import java.util.Vector;
 
 public class Queen implements ChessPiece
 {
-    private ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor teamColor;
+    public final PieceType pieceType = PieceType.QUEEN;
     public Queen(ChessGame.TeamColor teamColor) { this.teamColor = teamColor; }
     @Override
     public ChessGame.TeamColor getTeamColor() { return teamColor; }
@@ -16,9 +17,9 @@ public class Queen implements ChessPiece
     public PieceType getPieceType() { return PieceType.QUEEN; }
 
     @Override
-    public Collection<ChessMoveImpl> pieceMoves(ChessBoard board, ChessPositionImpl myPosition)
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
-        Collection<ChessMoveImpl> validMoves = new Vector<>();
+        Collection<ChessMove> validMoves = new Vector<>();
         ChessMoveImpl.checkValidMoveRight(board, myPosition, validMoves, this);
         ChessMoveImpl.checkValidMoveLeft(board, myPosition, validMoves, this);
         ChessMoveImpl.checkValidMoveUp(board, myPosition, validMoves, this);
