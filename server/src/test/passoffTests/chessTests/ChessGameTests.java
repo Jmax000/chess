@@ -433,7 +433,7 @@ public class ChessGameTests {
          */
 
         //White promotion
-        ChessMove whitePromotion = TestFactory.getNewMove(TestFactory.getNewPosition(7, 3),
+        ChessMoveImpl whitePromotion = TestFactory.getNewMove(TestFactory.getNewPosition(7, 3),
                 TestFactory.getNewPosition(8, 3), promotionType);
         game.makeMove(whitePromotion);
 
@@ -448,7 +448,7 @@ public class ChessGameTests {
 
 
         //Black take + promotion
-        ChessMove blackPromotion = TestFactory.getNewMove(TestFactory.getNewPosition(2, 5),
+        ChessMoveImpl blackPromotion = TestFactory.getNewMove(TestFactory.getNewPosition(2, 5),
                 TestFactory.getNewPosition(1, 6), promotionType);
         game.makeMove(blackPromotion);
 
@@ -795,7 +795,7 @@ public class ChessGameTests {
     @DisplayName("Valid Move Tests")
     public class ValidMoveTests {
 
-        private Set<ChessMove> validMoves;
+        private Set<ChessMoveImpl> validMoves;
 
         @BeforeEach
         public void setup() {
@@ -848,7 +848,7 @@ public class ChessGameTests {
             validMoves.add(TestFactory.getNewMove(knightPosition, 
                     TestFactory.getNewPosition(6, 2), null)); //capture bishop
 
-            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(knightPosition));
+            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(knightPosition));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
 
@@ -902,7 +902,7 @@ public class ChessGameTests {
 
             //check
             game.setBoard(board);
-            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(rookPosition));
+            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(rookPosition));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
         }
@@ -1001,7 +1001,7 @@ public class ChessGameTests {
 
             //check king moves
             game.setBoard(board);
-            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(kingPosition));
+            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(kingPosition));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
 
@@ -1051,7 +1051,7 @@ public class ChessGameTests {
             validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(2, 7), null));
 
             game.setBoard(board);
-            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(position));
+            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(position));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
         }

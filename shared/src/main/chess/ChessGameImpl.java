@@ -18,14 +18,14 @@ public class ChessGameImpl implements ChessGame
     public void setTeamTurn(TeamColor team) { teamTurn = team; }
 
     @Override
-    public Collection<ChessMove> validMoves(ChessPosition startPosition)
+    public Collection<ChessMoveImpl> validMoves(ChessPositionImpl startPosition)
     {
-        ChessPiece piece = chessBoard.getBoard()[startPosition.getRow()][startPosition.getCol()];
+        ChessPiece piece = chessBoard.getBoard()[startPosition.getRow()][startPosition.getColumn()];
         if (piece == null) { return null; }
-        Collection<ChessMove> possibleMoves = piece.pieceMoves(chessBoard, startPosition);
-        Collection<ChessMove> validMoves = new Vector<>();
+        Collection<ChessMoveImpl> possibleMoves = piece.pieceMoves(chessBoard, startPosition);
+        Collection<ChessMoveImpl> validMoves = new Vector<>();
 
-        for (ChessMove move : possibleMoves)
+        for (ChessMoveImpl move : possibleMoves)
         {
             ChessPiece deletedPiece = tempMove(move.getStartPosition(), move.getEndPosition());
             if (!isInCheck(piece.getTeamColor()))
@@ -40,42 +40,37 @@ public class ChessGameImpl implements ChessGame
 
     private ChessPiece tempMove(ChessPosition startPos, ChessPosition endPos)
     {
-        ChessPiece piece = chessBoard.getBoard()[startPos.getRow()][startPos.getCol()];
-        ChessPiece deletedPiece = chessBoard.getBoard()[endPos.getRow()][endPos.getCol()];
-        chessBoard.getBoard()[startPos.getRow()][startPos.getCol()] = null;
-        chessBoard.getBoard()[endPos.getRow()][endPos.getCol()] = piece;
+        ChessPiece piece = chessBoard.getBoard()[startPos.getRow()][startPos.getColumn()];
+        ChessPiece deletedPiece = chessBoard.getBoard()[endPos.getRow()][endPos.getColumn()];
+        chessBoard.getBoard()[startPos.getRow()][startPos.getColumn()] = null;
+        chessBoard.getBoard()[endPos.getRow()][endPos.getColumn()] = piece;
         return deletedPiece;
     }
 
     private void undoMove(ChessPosition startPos, ChessPosition endPos, ChessPiece deletedPiece)
     {
-        ChessPiece piece = chessBoard.getBoard()[endPos.getRow()][endPos.getCol()];
-        chessBoard.getBoard()[startPos.getRow()][startPos.getCol()] = piece;
-        chessBoard.getBoard()[endPos.getRow()][endPos.getCol()] = deletedPiece;
+        ChessPiece piece = chessBoard.getBoard()[endPos.getRow()][endPos.getColumn()];
+        chessBoard.getBoard()[startPos.getRow()][startPos.getColumn()] = piece;
+        chessBoard.getBoard()[endPos.getRow()][endPos.getColumn()] = deletedPiece;
     }
 
     @Override
-    public void makeMove(ChessMove move) throws InvalidMoveException
+    public void makeMove(ChessMoveImpl move) throws InvalidMoveException
     {
-        if (teamTurn == null)
-        {
-            throw new InvalidMoveException("The game has ended. No more moves can be made.");
-        }
-
-        ChessPiece piece = chessBoard.getBoard()[move.getStartPosition().getRow()][move.getStartPosition().getCol()];
-        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        ChessPiece piece = chessBoard.getBoard()[move.getStartPosition().getRow()][move.getStartPosition().getColumn()];
+        Collection<ChessMoveImpl> validMoves = validMoves(move.getStartPosition());
 
         if (!validMoves.contains(move))
         {
-            throw new InvalidMoveException("Invalid move. Try again.");
+            throw new InvalidMoveException("Throw");
         }
         if (teamTurn != piece.getTeamColor())
         {
-            throw new InvalidMoveException("It is currently " + teamTurn + "'s move.");
+            throw new InvalidMoveException("Out of turn");
         }
 
         //promotePawnCheck
-        if (move.getPromotionPiece() != null && piece.getPieceType() == ChessPiece.PieceType.PAWN)
+        if (move.promoType != null && piece.getPieceType() == ChessPiece.PieceType.PAWN)
         {
             if (piece.getTeamColor() == TeamColor.WHITE && move.getEndPosition().getRow() == 7)
             {
@@ -93,8 +88,8 @@ public class ChessGameImpl implements ChessGame
             }
         }
 
-        chessBoard.getBoard()[move.getStartPosition().getRow()][move.getStartPosition().getCol()] = null;
-        chessBoard.getBoard()[move.getEndPosition().getRow()][move.getEndPosition().getCol()] = piece;
+        chessBoard.getBoard()[move.getStartPosition().getRow()][move.getStartPosition().getColumn()] = null;
+        chessBoard.getBoard()[move.getEndPosition().getRow()][move.getEndPosition().getColumn()] = piece;
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK:TeamColor.WHITE;
     }
 
@@ -116,7 +111,7 @@ public class ChessGameImpl implements ChessGame
     public boolean isInStalemate(TeamColor teamColor)
     {
         ChessPiece[][] board = chessBoard.getBoard();
-        Collection<ChessMove> validMoves = new Vector<>();
+        Collection<ChessMoveImpl> validMoves = new Vector<>();
         for (int i = 0; i < board.length; i++)
         {
             for (int j = 0; j < board.length; j++)

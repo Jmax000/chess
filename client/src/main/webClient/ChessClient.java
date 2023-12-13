@@ -54,7 +54,7 @@ public class ChessClient
                 yield switch (cmd)
                 {
                     case "create" -> createGame(params);
-                    case "join", "observe" -> joinGameHTTP(params);
+                    case "join", "observe" -> joinGame(params);
                     case "list" -> listGame();
                     case "logout" -> logout();
                     case "help" -> help();
@@ -64,7 +64,6 @@ public class ChessClient
             case IN_GAME:
                 yield switch (cmd)
                 {
-                    case "join" -> joinGameWS(params);
                     case "draw_board", "draw" -> drawBoard();
                     case "highlight_moves", "highlight" -> highlightMoves(params);
                     case "resign" -> resign();
@@ -183,7 +182,8 @@ public class ChessClient
         }
         throw new ResponseException(400, "No game found. Try again.");
     }
-    public String joinGameHTTP(String[] params) throws ResponseException
+
+    public String joinGame(String[] params) throws ResponseException
     {
         JoinGameRequest request = new JoinGameRequest();
         JoinGameResult result = null;
@@ -204,36 +204,9 @@ public class ChessClient
 
         if (game != null && result != null)
         {
-            StringBuilder gameJoined = new StringBuilder();
-            gameJoined.append("Joined ");
-            gameJoined.append(game.getGameName());
-            gameJoined.append(" as ");
-            if (request.getPlayerColor() == null || request.getPlayerColor().isEmpty())
-            {
-                state = State.OBSERVING;
-                gameJoined.append("an observer.");
-            }
-            else
-            {
-                state = State.IN_GAME;
-                gameJoined.append(request.getPlayerColor());
-                gameJoined.append(".");
-            }
-
             ws = new WebSocketFacade(serverUrl, notificationHandler);
-            inGameState = new GameState(request.getGameID(), null);
-
-            return gameJoined.toString();
-        }
-        throw new ResponseException(400, "Expected: <ID> [WHITE | BLACK | <empty>]");
-    }
-
-    public String joinGameWS(String[] params) throws ResponseException
-    {
-        if (params.length == 1)
-        {
             ChessGame.TeamColor color = null;
-            String team = params[0];
+            String team = request.getPlayerColor();
             if (team != null)
             {
                 color = switch (team.toLowerCase())
@@ -246,24 +219,27 @@ public class ChessClient
 
             if (team == null)
             {
+                state = State.OBSERVING;
+                inGameState = new GameState(request.getGameID(), null);
                 UserGameCommand command = new UserGameCommand(authtoken);
-                command.setGameID(inGameState.gameID);
+                command.setGameID(request.getGameID());
                 command.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
                 ws.sendMessage(command);
                 return "";
             }
             else if (color != null)
             {
-                inGameState = new GameState(inGameState.gameID, color);
+                state = State.IN_GAME;
+                inGameState = new GameState(request.getGameID(), color);
                 UserGameCommand command = new UserGameCommand(authtoken);
-                command.setGameID(inGameState.gameID);
+                command.setGameID(request.getGameID());
                 command.setTeamColor(color);
                 command.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
                 ws.sendMessage(command);
                 return "";
             }
         }
-        throw new ResponseException(400, "Expected: [WHITE | BLACK | <empty>]");
+        throw new ResponseException(400, "Expected: <ID> [WHITE | BLACK | <empty>]");
     }
 
     String makeMove(String cmd) throws ResponseException
@@ -353,6 +329,7 @@ public class ChessClient
         command.setCommandType(UserGameCommand.CommandType.RESIGN);
         ws.sendMessage(command);
 
+        state = State.SIGNED_IN;
         return "";
     }
 
@@ -403,7 +380,6 @@ public class ChessClient
         {
 
             return """
-            - join [WHITE | BLACK | <empty>]
             - <YOUR_MOVE>
             - instructions
             - resign
@@ -425,21 +401,31 @@ public class ChessClient
         return """
                 Chess Game Instructions: How to Input Moves
 
+                Welcome to the text-based chess game! To make moves on the chessboard, we use a standard notation called algebraic notation. Follow these simple steps to input your moves:
+
                 Piece Abbreviations:
                 - King: K
                 - Queen: Q
                 - Rook: R
                 - Knight: N
                 - Bishop: B
-                - Pawn: P
+                - Pawn: (No abbreviation, just the coordinate of the destination square)
                 
                 File and Rank Coordinates:
                 - Files are labeled with letters from a to h, from left to right.
                 - Ranks are labeled with numbers from 1 to 8, from bottom to top.
                 
                 Notation for Moves:
-                - Each move is represented by the current square followed by a dash and the destination square.
-                - Each square is described by the file followed by the rank.
+                - Each move is represented by the piece abbreviation followed by the destination square.
+                        Examples:
+                            - Pawn moves: e4 (moves pawn to e4)
+                            - Pawn promotion: e8=Q (promotes pawn to queen on e8)
+                            - Knight moves: Nf3 (moves knight to f3)
+                            - Bishop moves: Bb5 (moves bishop to b5)
+                            - Rook moves: Ra1 (moves rook to a1)
+                            - Queen moves: Qd4 (moves queen to d4)
+                            - King moves: Kg1 (moves king to g1)
+                - If there is ambiguity between pieces that can move to the same square, include the file or rank of the starting square.
                         Examples:
                             - Pawn moves: e2-e4 (moves pawn to e4)
                             - Pawn promotion: e7-e8=Q (promotes pawn to queen on e8)
@@ -457,9 +443,7 @@ public class ChessClient
                 Entering a Move:
                 - To make a move, simply type the algebraic notation for your desired move and press enter.
 
-                If you have any questions, type "help" for assistance.
-                
-                """;
+                Now that you're familiar with algebraic notation, go ahead and enjoy the game! If you have any questions, type "help" for assistance.""";
     }
 
     private String invalidCmd()

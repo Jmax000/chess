@@ -37,7 +37,7 @@ public interface ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      *         startPosition
      */
-    Collection<ChessMove> validMoves(ChessPosition startPosition);
+    Collection<ChessMoveImpl> validMoves(ChessPositionImpl startPosition);
 
     /**
      * Makes a move in a chess game
@@ -45,7 +45,7 @@ public interface ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    void makeMove(ChessMove move) throws InvalidMoveException;
+    void makeMove(ChessMoveImpl move) throws InvalidMoveException;
 
     /**
      * Determines if the given team is in check

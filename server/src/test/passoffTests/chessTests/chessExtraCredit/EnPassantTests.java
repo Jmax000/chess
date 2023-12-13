@@ -69,7 +69,7 @@ public class EnPassantTests {
 
         //make sure pawn has En Passant move
         ChessMoveImpl enPassantMove =
-                (ChessMoveImpl) TestFactory.getNewMove(TestFactory.getNewPosition(5, 2), TestFactory.getNewPosition(6, 3), null);
+                TestFactory.getNewMove(TestFactory.getNewPosition(5, 2), TestFactory.getNewPosition(6, 3), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
 
@@ -132,7 +132,7 @@ public class EnPassantTests {
 
         //make sure pawn has En Passant move
         ChessMoveImpl enPassantMove =
-                (ChessMoveImpl) TestFactory.getNewMove(TestFactory.getNewPosition(5, 4), TestFactory.getNewPosition(6, 3), null);
+                TestFactory.getNewMove(TestFactory.getNewPosition(5, 4), TestFactory.getNewPosition(6, 3), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
 
@@ -195,7 +195,7 @@ public class EnPassantTests {
 
         //make sure pawn has En Passant move
         ChessMoveImpl enPassantMove =
-                (ChessMoveImpl) TestFactory.getNewMove(TestFactory.getNewPosition(4, 6), TestFactory.getNewPosition(3, 7), null);
+                TestFactory.getNewMove(TestFactory.getNewPosition(4, 6), TestFactory.getNewPosition(3, 7), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
 
@@ -258,7 +258,7 @@ public class EnPassantTests {
 
         //make sure pawn has En Passant move
         ChessMoveImpl enPassantMove =
-                (ChessMoveImpl) TestFactory.getNewMove(TestFactory.getNewPosition(4, 8), TestFactory.getNewPosition(3, 7), null);
+                TestFactory.getNewMove(TestFactory.getNewPosition(4, 8), TestFactory.getNewPosition(3, 7), null);
         Assertions.assertTrue(game.validMoves(position).contains(enPassantMove),
                 "ChessGame validMoves did not contain a valid En Passant move");
 

@@ -9,7 +9,6 @@ import services.UserService;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
-import websocket.WebSocketHandler;
 
 public class Server
 {
@@ -21,9 +20,6 @@ public class Server
         // Register a directory for hosting static files
         Spark.externalStaticFileLocation("web");
 
-        //Register websocket endpoint
-        Spark.webSocket("/connect", WebSocketHandler.class);
-
         // Register handlers for each endpoint using the method reference syntax
         Spark.delete("/db", this::handleClear);
         Spark.post("/user", this::handleRegister);
@@ -32,7 +28,6 @@ public class Server
         Spark.get("/game", this::handleListGames);
         Spark.post("/game", this::handleCreateGame);
         Spark.put("/game", this::handleJoinGame);
-
         Spark.init();
     }
 

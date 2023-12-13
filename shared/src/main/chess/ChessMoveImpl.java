@@ -6,41 +6,41 @@ import java.util.Objects;
 
 public class ChessMoveImpl implements ChessMove
 {
-    private final ChessPosition startPos;
-    private final ChessPosition endPos;
+    private ChessPositionImpl startPos;
+    private ChessPositionImpl endPos;
 
     ChessPiece.PieceType promoType;
 
-    public ChessMoveImpl(ChessPosition start, ChessPosition end, ChessPiece.PieceType promotionPiece)
+    public ChessMoveImpl(ChessPositionImpl start, ChessPositionImpl end, ChessPiece.PieceType promotionPiece)
     {
         startPos = start;
         endPos = end;
         promoType = promotionPiece;
     }
 
-    public ChessMoveImpl(ChessPosition start, ChessPosition end)
+    public ChessMoveImpl(ChessPositionImpl start, ChessPositionImpl end)
     {
         startPos = start;
         endPos = end;
     }
 
     @Override
-    public ChessPosition getStartPosition() { return startPos; }
+    public ChessPositionImpl getStartPosition() { return startPos; }
 
     @Override
-    public ChessPosition getEndPosition() { return endPos; }
+    public ChessPositionImpl getEndPosition() { return endPos; }
 
     @Override
     public ChessPiece.PieceType getPromotionPiece() { return promoType; }
 
-    public static void checkValidMoveRight(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveRight(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow(), myPosition.getCol() + 1);
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow(), myPosition.getColumn() + 1);
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow(), nextPos.getCol() + 1);
+            nextPos = new ChessPositionImpl(nextPos.getRow(), nextPos.getColumn() + 1);
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -48,15 +48,15 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveLeft(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveLeft(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
         //Check Left
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow(), myPosition.getCol() - 1);
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow(), myPosition.getColumn() - 1);
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow(), nextPos.getCol() - 1);
+            nextPos = new ChessPositionImpl(nextPos.getRow(), nextPos.getColumn() - 1);
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -64,14 +64,14 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveUp(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveUp(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getCol());
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getColumn());
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow() + 1, nextPos.getCol());
+            nextPos = new ChessPositionImpl(nextPos.getRow() + 1, nextPos.getColumn());
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -79,14 +79,14 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveDown(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveDown(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getCol());
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getColumn());
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow() - 1, nextPos.getCol());
+            nextPos = new ChessPositionImpl(nextPos.getRow() - 1, nextPos.getColumn());
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -94,14 +94,14 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveUpRight(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveUpRight(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getCol() + 1);
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getColumn() + 1);
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow() + 1, nextPos.getCol() + 1);
+            nextPos = new ChessPositionImpl(nextPos.getRow() + 1, nextPos.getColumn() + 1);
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -109,14 +109,14 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveUpLeft(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveUpLeft(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getCol() - 1);
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() + 1, myPosition.getColumn() - 1);
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow() + 1, nextPos.getCol() - 1);
+            nextPos = new ChessPositionImpl(nextPos.getRow() + 1, nextPos.getColumn() - 1);
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -124,14 +124,14 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveDownRight(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveDownRight(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getCol() + 1);
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getColumn() + 1);
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow() - 1, nextPos.getCol() + 1);
+            nextPos = new ChessPositionImpl(nextPos.getRow() - 1, nextPos.getColumn() + 1);
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {
@@ -139,14 +139,14 @@ public class ChessMoveImpl implements ChessMove
         }
     }
 
-    public static void checkValidMoveDownLeft(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves, ChessPiece piece)
+    public static void checkValidMoveDownLeft(ChessBoard board, ChessPositionImpl myPosition, Collection<ChessMoveImpl> validMoves, ChessPiece piece)
     {
-        ChessPosition nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getCol() - 1);
+        ChessPositionImpl nextPos = new ChessPositionImpl(myPosition.getRow() - 1, myPosition.getColumn() - 1);
 
         while(nextPos.validPos() && board.getPiece(nextPos) == null)
         {
             validMoves.add(new ChessMoveImpl(myPosition, nextPos));
-            nextPos = new ChessPositionImpl(nextPos.getRow() - 1, nextPos.getCol() - 1);
+            nextPos = new ChessPositionImpl(nextPos.getRow() - 1, nextPos.getColumn() - 1);
         }
         if (nextPos.validPos() && board.getPiece(nextPos) != null && board.getPiece(nextPos).getTeamColor() != piece.getTeamColor())
         {

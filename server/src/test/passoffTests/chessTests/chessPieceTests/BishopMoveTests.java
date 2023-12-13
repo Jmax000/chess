@@ -15,7 +15,7 @@ public class BishopMoveTests {
     private ChessBoard board;
     private ChessPiece bishop;
     private ChessPositionImpl position;
-    private Set<ChessMove> validMoves;
+    private Set<ChessMoveImpl> validMoves;
 
     @BeforeEach
     public void setup() {
@@ -66,7 +66,7 @@ public class BishopMoveTests {
 
 
         //check
-        Set<ChessMove> pieceMoves = new HashSet<>(bishop.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(bishop.pieceMoves(board, position));
         Assertions.assertEquals(validMoves, pieceMoves,
                 "ChessPiece pieceMoves did not return the correct moves");
     }
@@ -106,18 +106,18 @@ public class BishopMoveTests {
 
 
         //Get moves for bishop
-        Set<ChessMove> pieceMoves = new HashSet<>(bishop.pieceMoves(board, position));
+        Set<ChessMoveImpl> pieceMoves = new HashSet<>(bishop.pieceMoves(board, position));
 
         //Cannot capture friendlies
         for (ChessPositionImpl allyPosition : allyPiecePositions) {
-            ChessMove badCapture = TestFactory.getNewMove(position, allyPosition, null);
+            ChessMoveImpl badCapture = TestFactory.getNewMove(position, allyPosition, null);
             Assertions.assertFalse(pieceMoves.contains(badCapture),
                     "Piece moves contained move: " + badCapture + " that would capture a ally piece");
         }
 
         //Can capture unfriendlies
         for (ChessPositionImpl enemyPosition : enemyPiecePositions) {
-            ChessMove capture = TestFactory.getNewMove(position, enemyPosition, null);
+            ChessMoveImpl capture = TestFactory.getNewMove(position, enemyPosition, null);
             Assertions.assertTrue(pieceMoves.contains(capture),
                     "Piece moves did not contain valid move: " + capture + " that would capture an enemy piece");
         }

@@ -14,7 +14,7 @@ public interface ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
-    void addPiece(ChessPosition position, ChessPiece piece);
+    void addPiece(ChessPositionImpl position, ChessPiece piece);
 
     /**
      * Gets a chess piece on the chessboard
@@ -23,11 +23,12 @@ public interface ChessBoard {
      * @return Either the piece at the position, or null if no piece is at that
      *         position
      */
-    ChessPiece getPiece(ChessPosition position);
+    ChessPiece getPiece(ChessPositionImpl position);
 
     /**
      * Gets a chess piece on the chessboard
      *
+     * @param position The position to get the piece from
      * @return Either the piece at the position, or null if no piece is at that
      *         position
      */

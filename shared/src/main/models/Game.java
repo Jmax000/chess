@@ -43,5 +43,5 @@ public class Game
     public String getGameName() { return gameName; }
     public void setGameName(String gameName) { this.gameName = gameName; }
     public ChessGame getGame() { return game; }
-    public void setGame(ChessGame game) { this.game = game; }
+    public void setGame(ChessGameImpl game) { this.game = game; }
 }

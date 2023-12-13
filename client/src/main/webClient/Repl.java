@@ -1,11 +1,10 @@
 package webClient;
-import webSocketMessages.serverMessages.ServerMessage;
-import websocket.NotificationHandler;
+
 import java.util.Scanner;
-import static ui.ChessBoardUI.drawChessBoard;
+
 import static ui.EscapeSequences.*;
 
-public class Repl implements NotificationHandler
+public class Repl
 {
     private final ChessClient client;
     public Repl(String serverUrl)
@@ -44,24 +43,11 @@ public class Repl implements NotificationHandler
         }
     }
 
-    public void notify(ServerMessage serverMessage)
+/*    public void notify(Notification notification)
     {
-        if (serverMessage.getServerMessageType() == ServerMessage.Type.LOAD_GAME && serverMessage.getHighlightMoves() == null)
-        {
-            System.out.println("\n" + drawChessBoard(serverMessage.getGame().getBoard(), serverMessage.getTeamColor(), null));
-            printPrompt();
-        }
-        else if (serverMessage.getServerMessageType() == ServerMessage.Type.LOAD_GAME && serverMessage.getHighlightMoves() != null)
-        {
-            System.out.println("\n" + drawChessBoard(serverMessage.getGame().getBoard(), serverMessage.getTeamColor(), serverMessage.getHighlightMoves()));
-            printPrompt();
-        }
-        else
-        {
-            System.out.println(serverMessage);
-            printPrompt();
-        }
-    }
+        System.out.println(RED + notification.message());
+        printPrompt();
+    }*/
 
     private void printPrompt()
     {

@@ -10,12 +10,12 @@ public interface ChessMove {
     /**
      * @return ChessPosition of starting location
      */
-    ChessPosition getStartPosition();
+    ChessPositionImpl getStartPosition();
 
     /**
      * @return ChessPosition of ending location
      */
-    ChessPosition getEndPosition();
+    ChessPositionImpl getEndPosition();
 
     /**
      * Gets the type of piece to promote a pawn to if pawn promotion is part of this
