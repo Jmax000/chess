@@ -29,6 +29,19 @@ public class ConnectionManager {
         connections.removeIf(c -> c.session == session);
     }
 
+    final public boolean verifySession(int gameID, ChessGame.TeamColor sessionColor, Session session) throws IOException
+    {
+        Vector<Connection> connections = connectedGames.get(gameID);
+        for (var c : connections)
+        {
+            if (c.session.isOpen() && c.session == session)
+            {
+                return c.teamColor == sessionColor;
+            }
+        }
+        return true;
+    }
+
     public void notify(int gameID, ServerMessage notification) throws IOException
     {
         Vector<Connection> connections = connectedGames.get(gameID);

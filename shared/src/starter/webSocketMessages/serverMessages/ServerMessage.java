@@ -17,6 +17,7 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 public class ServerMessage {
     Type serverMessageType;
     String message;
+    public String errorMessage;
     ChessGame game;
     ChessGame.TeamColor teamColor;
     Collection<ChessMove> highlightMoves;
@@ -34,6 +35,7 @@ public class ServerMessage {
     public Type getServerMessageType() {
         return this.serverMessageType;
     }
+
     public void setServerMessageType(Type type)
     {
         this.serverMessageType = type;
@@ -42,6 +44,16 @@ public class ServerMessage {
     public void setMessage(String message)
     {
         this.message = message;
+    }
+
+    public String getErrorMessage()
+    {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage)
+    {
+        this.errorMessage = errorMessage;
     }
 
     public ChessGame getGame()

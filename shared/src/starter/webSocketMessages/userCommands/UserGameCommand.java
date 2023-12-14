@@ -28,7 +28,7 @@ public class UserGameCommand {
     protected CommandType commandType;
     private final String authToken;
     private int gameID;
-    private ChessGame.TeamColor teamColor;
+    private ChessGame.TeamColor playerColor;
     private ChessMove move;
     private ChessPiece.PieceType promoType;
     private ChessPosition highlightPosition;
@@ -48,14 +48,14 @@ public class UserGameCommand {
         this.gameID = gameID;
     }
 
-    public ChessGame.TeamColor getTeamColor()
+    public ChessGame.TeamColor getPlayerColor()
     {
-        return teamColor;
+        return playerColor;
     }
 
-    public void setTeamColor(ChessGame.TeamColor teamColor)
+    public void setPlayerColor(ChessGame.TeamColor playerColor)
     {
-        this.teamColor = teamColor;
+        this.playerColor = playerColor;
     }
 
     public ChessMove getMove()

@@ -231,7 +231,7 @@ public class ChessClient
                 inGameState = new GameState(request.getGameID(), color);
                 UserGameCommand command = new UserGameCommand(authtoken);
                 command.setGameID(request.getGameID());
-                command.setTeamColor(color);
+                command.setPlayerColor(color);
                 command.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
                 ws.sendMessage(command);
                 return "";
@@ -277,7 +277,7 @@ public class ChessClient
         {
             UserGameCommand command = new UserGameCommand(authtoken);
             command.setGameID(inGameState.gameID);
-            command.setTeamColor(inGameState.teamColor);
+            command.setPlayerColor(inGameState.teamColor);
             command.setMove(new ChessMoveImpl(startPosition, endPosition));
             command.setPromoType(promoType);
             command.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
@@ -291,7 +291,7 @@ public class ChessClient
     {
         UserGameCommand command = new UserGameCommand(authtoken);
         command.setGameID(inGameState.gameID);
-        command.setTeamColor(inGameState.teamColor);
+        command.setPlayerColor(inGameState.teamColor);
         command.setCommandType(UserGameCommand.CommandType.DRAW_BOARD);
 
         ws.sendMessage(command);
@@ -309,7 +309,7 @@ public class ChessClient
             {
                 UserGameCommand command = new UserGameCommand(authtoken);
                 command.setGameID(inGameState.gameID);
-                command.setTeamColor(inGameState.teamColor);
+                command.setPlayerColor(inGameState.teamColor);
                 command.setHighlightPosition(position);
                 command.setCommandType(UserGameCommand.CommandType.DRAW_BOARD);
 
@@ -324,7 +324,7 @@ public class ChessClient
     {
         UserGameCommand command = new UserGameCommand(authtoken);
         command.setGameID(inGameState.gameID);
-        command.setTeamColor(inGameState.teamColor);
+        command.setPlayerColor(inGameState.teamColor);
         command.setCommandType(UserGameCommand.CommandType.RESIGN);
         ws.sendMessage(command);
 
@@ -335,7 +335,7 @@ public class ChessClient
     {
         UserGameCommand command = new UserGameCommand(authtoken);
         command.setGameID(inGameState.gameID);
-        command.setTeamColor(inGameState.teamColor);
+        command.setPlayerColor(inGameState.teamColor);
         command.setCommandType(UserGameCommand.CommandType.LEAVE);
         ws.sendMessage(command);
 

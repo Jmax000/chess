@@ -1,6 +1,9 @@
 package webClient;
+import chess.ChessGame;
 import webSocketMessages.serverMessages.ServerMessage;
 import websocket.NotificationHandler;
+
+import java.util.Objects;
 import java.util.Scanner;
 import static ui.ChessBoardUI.drawChessBoard;
 import static ui.EscapeSequences.*;
@@ -49,9 +52,11 @@ public class Repl implements NotificationHandler
         if (serverMessage.getServerMessageType() == ServerMessage.Type.LOAD_GAME)
         {
             client.inGameState.game = serverMessage.getGame();
+            ChessGame.TeamColor color = Objects.requireNonNullElse(client.inGameState.teamColor, ChessGame.TeamColor.WHITE);
+
             if (serverMessage.getHighlightMoves() == null)
             {
-                System.out.println("\n" + drawChessBoard(client.inGameState.game.getBoard(), client.inGameState.teamColor, null));
+                System.out.println("\n" + drawChessBoard(client.inGameState.game.getBoard(), color, null));
             }
             else
             {
