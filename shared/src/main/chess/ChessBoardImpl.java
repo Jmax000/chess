@@ -9,18 +9,18 @@ public class ChessBoardImpl implements ChessBoard
 {
     public static int BOARD_SIZE = 8;
 
-    private ChessPiece[][] board = new ChessPiece[BOARD_SIZE][BOARD_SIZE];
+    private final ChessPiece[][] board = new ChessPiece[BOARD_SIZE][BOARD_SIZE];
 
     @Override
-    public void addPiece(ChessPositionImpl position, ChessPiece piece)
+    public void addPiece(ChessPosition position, ChessPiece piece)
     {
-        board[position.getRow()][position.getColumn()] = piece;
+        board[position.getRow()][position.getCol()] = piece;
     }
 
     @Override
-    public ChessPiece getPiece(ChessPositionImpl position)
+    public ChessPiece getPiece(ChessPosition position)
     {
-        return board[position.getRow()][position.getColumn()];
+        return board[position.getRow()][position.getCol()];
     }
 
     @Override
@@ -80,8 +80,8 @@ public class ChessBoardImpl implements ChessBoard
 
     public boolean isInCheck(ChessGame.TeamColor teamColor)
     {
-        Collection<ChessMoveImpl> validMoves = new Vector<>();
-        ChessPositionImpl kingPos = null;
+        Collection<ChessMove> validMoves = new Vector<>();
+        ChessPosition kingPos = null;
         for (int i = 0; i < board.length; i++)
         {
             for (int j = 0; j < board.length; j++)
@@ -98,9 +98,9 @@ public class ChessBoardImpl implements ChessBoard
             }
         }
 
-        for (ChessMoveImpl move : validMoves)
+        for (ChessMove move : validMoves)
         {
-            if (kingPos != null && move.getEndPosition().getRow() == kingPos.getRow() && move.getEndPosition().getColumn() == kingPos.getColumn())
+            if (kingPos != null && move.getEndPosition().getRow() == kingPos.getRow() && move.getEndPosition().getCol() == kingPos.getCol())
             {
                 return true;
             }

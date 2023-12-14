@@ -82,7 +82,7 @@ public class WebSocketHandler
 
         //Server sends a Notification message to all other clients in that game informing them what color the root client is joining as.
         notification = new ServerMessage(ServerMessage.Type.NOTIFICATION);
-        notification.setMessage(authtoken.getUsername() + "has joined as " + command.getTeamColor());
+        notification.setMessage(authtoken.getUsername() + " has joined as " + command.getTeamColor());
         connections.notifyExcept(command.getGameID(), session, notification);
     }
     private void joinObserver(UserGameCommand command, Session session) throws IOException, DataAccessException {
@@ -108,9 +108,7 @@ public class WebSocketHandler
         //Server sends a Notification message to all other clients in that game informing them the root client joined as an observer.
         notification = new ServerMessage(ServerMessage.Type.NOTIFICATION);
         notification.setMessage(authtoken.getUsername() + "has joined as an observer.");
-        connections.notifyTeam(command.getGameID(), ChessGame.TeamColor.WHITE, notification);
-        connections.notifyTeam(command.getGameID(), ChessGame.TeamColor.BLACK, notification);
-        connections.notifyTeam(command.getGameID(), null, notification);
+        connections.notifyExcept(command.getGameID(), session, notification);
     }
     private void makeMove(UserGameCommand command, Session session) throws IOException, DataAccessException
     {
@@ -122,24 +120,31 @@ public class WebSocketHandler
             sendError(command.getGameID(), session, "Not authorized.");
             return;
         }
-        else if (game != null)
-        {
-            try
-            {
-                ChessGame chessGame = game.getGame();
-                ChessMove move = command.getMove();
-                chessGame.makeMove(move);
-                game.setGame(chessGame);
-                GameDAO.updateGame(game);
-            }
-            catch (InvalidMoveException e)
-            {
-                sendError(command.getGameID(), session, e.getMessage());
-            }
-        }
-        else
+        else if (game == null)
         {
             sendError(command.getGameID(), session, "Game could not be found");
+            return;
+        }
+        else if (command.getMove() != null)
+        {
+            if (!command.getMove().getStartPosition().validPos() && !command.getMove().getEndPosition().validPos())
+            {
+                sendError(command.getGameID(), session, "Your move is out of bounds.");
+                return;
+            }
+        }
+
+        try
+        {
+            ChessGame chessGame = game.getGame();
+            ChessMove move = command.getMove();
+            chessGame.makeMove(move);
+            game.setGame(chessGame);
+            GameDAO.updateGame(game);
+        }
+        catch (InvalidMoveException e)
+        {
+            sendError(command.getGameID(), session, e.getMessage());
             return;
         }
 
@@ -205,7 +210,6 @@ public class WebSocketHandler
         notification.setGame(game.getGame());
         notification.setTeamColor(command.getTeamColor());
         connections.notifyRoot(command.getGameID(), session, notification);
-
     }
     private void resign(UserGameCommand command, Session session) throws IOException, DataAccessException
     {
@@ -226,7 +230,7 @@ public class WebSocketHandler
         updateGame(game);
 
         var notification = new ServerMessage(ServerMessage.Type.NOTIFICATION);
-        notification.setMessage(authtoken.getUsername() + "has resigned. " + opponent(command.getTeamColor()) + " won!");
+        notification.setMessage(authtoken.getUsername() + " has resigned. " + game.getBlackUsername() + " wins!");
         connections.notify(command.getGameID(), notification);
     }
     private void leave(UserGameCommand command, Session session) throws IOException, DataAccessException {
@@ -258,23 +262,7 @@ public class WebSocketHandler
 
         var notification = new ServerMessage(ServerMessage.Type.NOTIFICATION);
         notification.setMessage(authtoken.getUsername() + "has left.");
-        connections.notifyExcept(command.getGameID(), session, notification);
-    }
-
-    private ChessGame.TeamColor opponent(ChessGame.TeamColor playerColor)
-    {
-        if (playerColor == ChessGame.TeamColor.WHITE)
-        {
-            return ChessGame.TeamColor.BLACK;
-        }
-        else if (playerColor == ChessGame.TeamColor.BLACK)
-        {
-            return ChessGame.TeamColor.WHITE;
-        }
-        else
-        {
-            return null;
-        }
+        connections.notify(command.getGameID(), notification);
     }
 
     void sendError(int gameID, Session session, String message) throws IOException

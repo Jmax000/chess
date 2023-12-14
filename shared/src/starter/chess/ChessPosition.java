@@ -17,5 +17,7 @@ public interface ChessPosition {
      * @return which column this position is in
      *         1 codes for the left row
      */
-    int getColumn();
+    int getCol();
+
+    boolean validPos();
 }

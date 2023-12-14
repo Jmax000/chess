@@ -34,39 +34,39 @@ public class ChessGameTests {
 		| | |B| | | | | |
 		| |K| | | | | |R|
          */
-        
-        ChessPositionImpl kingStartPosition = TestFactory.getNewPosition(1, 2);
-        board.addPiece(kingStartPosition, 
+
+        ChessPosition kingStartPosition = TestFactory.getNewPosition(1, 2);
+        board.addPiece(kingStartPosition,
                 TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
 
-        ChessPositionImpl queenStartPosition = TestFactory.getNewPosition(7, 8);
-        board.addPiece(queenStartPosition, 
+        ChessPosition queenStartPosition = TestFactory.getNewPosition(7, 8);
+        board.addPiece(queenStartPosition,
                 TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
 
-        ChessPositionImpl rookStartPosition = TestFactory.getNewPosition(1, 8);
-        board.addPiece(rookStartPosition, 
+        ChessPosition rookStartPosition = TestFactory.getNewPosition(1, 8);
+        board.addPiece(rookStartPosition,
                 TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
 
-        ChessPositionImpl knightStartPosition = TestFactory.getNewPosition(6, 3);
-        board.addPiece(knightStartPosition, 
+        ChessPosition knightStartPosition = TestFactory.getNewPosition(6, 3);
+        board.addPiece(knightStartPosition,
                 TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
-        
-        ChessPositionImpl bishopStartPosition = TestFactory.getNewPosition(2, 3);
-        board.addPiece(bishopStartPosition, 
+
+        ChessPosition bishopStartPosition = TestFactory.getNewPosition(2, 3);
+        board.addPiece(bishopStartPosition,
                 TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
 
-        ChessPositionImpl pawnStartPosition = TestFactory.getNewPosition(6, 7);
-        board.addPiece(pawnStartPosition, 
+        ChessPosition pawnStartPosition = TestFactory.getNewPosition(6, 7);
+        board.addPiece(pawnStartPosition,
                 TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
 
         game.setBoard(board);
         game.setTeamTurn(ChessGame.TeamColor.WHITE);
-        
+
         //king
-        ChessPositionImpl kingEndPosition = TestFactory.getNewPosition(1, 1);
+        ChessPosition kingEndPosition = TestFactory.getNewPosition(1, 1);
         game.makeMove(TestFactory.getNewMove(kingStartPosition, kingEndPosition, null));
-        
-        Assertions.assertNull(game.getBoard().getPiece(kingStartPosition), 
+
+        Assertions.assertNull(game.getBoard().getPiece(kingStartPosition),
                 "After move, a piece is still present in the start position");
         ChessPiece king = game.getBoard().getPiece(kingEndPosition);
         Assertions.assertNotNull(king, "After move, no piece found at the end position");
@@ -87,7 +87,7 @@ public class ChessGameTests {
          */
 
         //queen
-        ChessPositionImpl queenEndPosition = TestFactory.getNewPosition(8, 7);
+        ChessPosition queenEndPosition = TestFactory.getNewPosition(8, 7);
         game.makeMove(TestFactory.getNewMove(queenStartPosition, queenEndPosition, null));
 
         Assertions.assertNull(game.getBoard().getPiece(queenStartPosition),
@@ -111,7 +111,7 @@ public class ChessGameTests {
          */
 
         //rook
-        ChessPositionImpl rookEndPosition = TestFactory.getNewPosition(3, 8);
+        ChessPosition rookEndPosition = TestFactory.getNewPosition(3, 8);
         game.makeMove(TestFactory.getNewMove(rookStartPosition, rookEndPosition, null));
 
         Assertions.assertNull(game.getBoard().getPiece(rookStartPosition),
@@ -135,7 +135,7 @@ public class ChessGameTests {
          */
 
         //knight
-        ChessPositionImpl knightEndPosition = TestFactory.getNewPosition(7, 5);
+        ChessPosition knightEndPosition = TestFactory.getNewPosition(7, 5);
         game.makeMove(TestFactory.getNewMove(knightStartPosition, knightEndPosition, null));
 
         Assertions.assertNull(game.getBoard().getPiece(knightStartPosition),
@@ -159,7 +159,7 @@ public class ChessGameTests {
          */
 
         //bishop
-        ChessPositionImpl bishopEndPosition = TestFactory.getNewPosition(1, 2);
+        ChessPosition bishopEndPosition = TestFactory.getNewPosition(1, 2);
         game.makeMove(TestFactory.getNewMove(bishopStartPosition, bishopEndPosition, null));
 
         Assertions.assertNull(game.getBoard().getPiece(bishopStartPosition),
@@ -183,7 +183,7 @@ public class ChessGameTests {
          */
 
         //pawn
-        ChessPositionImpl pawnEndPosition = TestFactory.getNewPosition(5, 7);
+        ChessPosition pawnEndPosition = TestFactory.getNewPosition(5, 7);
         game.makeMove(TestFactory.getNewMove(pawnStartPosition, pawnEndPosition, null));
 
         Assertions.assertNull(game.getBoard().getPiece(pawnStartPosition),
@@ -207,7 +207,7 @@ public class ChessGameTests {
          */
     }
 
-    
+
     @Test
     @DisplayName("Invalid Make Move")
     public void invalidMoves() throws InvalidMoveException {
@@ -433,7 +433,7 @@ public class ChessGameTests {
          */
 
         //White promotion
-        ChessMoveImpl whitePromotion = TestFactory.getNewMove(TestFactory.getNewPosition(7, 3),
+        ChessMove whitePromotion = TestFactory.getNewMove(TestFactory.getNewPosition(7, 3),
                 TestFactory.getNewPosition(8, 3), promotionType);
         game.makeMove(whitePromotion);
 
@@ -448,7 +448,7 @@ public class ChessGameTests {
 
 
         //Black take + promotion
-        ChessMoveImpl blackPromotion = TestFactory.getNewMove(TestFactory.getNewPosition(2, 5),
+        ChessMove blackPromotion = TestFactory.getNewMove(TestFactory.getNewPosition(2, 5),
                 TestFactory.getNewPosition(1, 6), promotionType);
         game.makeMove(blackPromotion);
 
@@ -795,7 +795,7 @@ public class ChessGameTests {
     @DisplayName("Valid Move Tests")
     public class ValidMoveTests {
 
-        private Set<ChessMoveImpl> validMoves;
+        private Set<ChessMove> validMoves;
 
         @BeforeEach
         public void setup() {
@@ -821,11 +821,11 @@ public class ChessGameTests {
          */
 
             ChessPiece knight = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-            ChessPositionImpl knightPosition = TestFactory.getNewPosition(4, 3);
+            ChessPosition knightPosition = TestFactory.getNewPosition(4, 3);
             board.addPiece(knightPosition, knight);
 
             ChessPiece queen = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-            ChessPositionImpl queenPosition = TestFactory.getNewPosition(2, 4);
+            ChessPosition queenPosition = TestFactory.getNewPosition(2, 4);
             board.addPiece(queenPosition, queen);
 
             //vulnerable team king
@@ -845,18 +845,18 @@ public class ChessGameTests {
             //knight valid moves
             validMoves.add(TestFactory.getNewMove(knightPosition,
                     TestFactory.getNewPosition(3, 5), null));  //defend king
-            validMoves.add(TestFactory.getNewMove(knightPosition, 
+            validMoves.add(TestFactory.getNewMove(knightPosition,
                     TestFactory.getNewPosition(6, 2), null)); //capture bishop
 
-            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(knightPosition));
+            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(knightPosition));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
 
             //queen valid moves
             validMoves.clear();
-            validMoves.add(TestFactory.getNewMove(queenPosition, 
+            validMoves.add(TestFactory.getNewMove(queenPosition,
                     TestFactory.getNewPosition(3, 5), null));
-            validMoves.add(TestFactory.getNewMove(queenPosition, 
+            validMoves.add(TestFactory.getNewMove(queenPosition,
                     TestFactory.getNewPosition(4, 4), null));
 
             gameMoves = new HashSet<>(game.validMoves(queenPosition));
@@ -883,7 +883,7 @@ public class ChessGameTests {
 
 
             ChessPiece rook = TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-            ChessPositionImpl rookPosition = TestFactory.getNewPosition(5, 6);
+            ChessPosition rookPosition = TestFactory.getNewPosition(5, 6);
             board.addPiece(rookPosition, rook);
 
             //Enemy Rook causing -xray check (white rook can't move out of line)
@@ -892,7 +892,7 @@ public class ChessGameTests {
             board.addPiece(TestFactory.getNewPosition(5, 8),
                     TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
 
-            
+
             validMoves.add(TestFactory.getNewMove(rookPosition, TestFactory.getNewPosition(5, 7), null));
             validMoves.add(TestFactory.getNewMove(rookPosition, TestFactory.getNewPosition(5, 5), null));
             validMoves.add(TestFactory.getNewMove(rookPosition, TestFactory.getNewPosition(5, 4), null));
@@ -902,7 +902,7 @@ public class ChessGameTests {
 
             //check
             game.setBoard(board);
-            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(rookPosition));
+            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(rookPosition));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
         }
@@ -923,7 +923,7 @@ public class ChessGameTests {
 		| | | | | | | | |
          */
 
-            ChessPositionImpl position = TestFactory.getNewPosition(4, 4);
+            ChessPosition position = TestFactory.getNewPosition(4, 4);
             ChessPiece rook = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
             board.addPiece(position, rook);
@@ -956,7 +956,7 @@ public class ChessGameTests {
          */
 
             ChessPiece king = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-            ChessPositionImpl kingPosition = TestFactory.getNewPosition(7, 4);
+            ChessPosition kingPosition = TestFactory.getNewPosition(7, 4);
             board.addPiece(kingPosition, king);
 
 
@@ -983,11 +983,11 @@ public class ChessGameTests {
             ChessPiece rook = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
             //get positions
-            ChessPositionImpl pawnPosition = TestFactory.getNewPosition(2, 6);
-            ChessPositionImpl bishopPosition = TestFactory.getNewPosition(7, 8);
-            ChessPositionImpl queenPosition = TestFactory.getNewPosition(1, 2);
-            ChessPositionImpl knightPosition = TestFactory.getNewPosition(5, 4);
-            ChessPositionImpl rookPosition = TestFactory.getNewPosition(3, 8);
+            ChessPosition pawnPosition = TestFactory.getNewPosition(2, 6);
+            ChessPosition bishopPosition = TestFactory.getNewPosition(7, 8);
+            ChessPosition queenPosition = TestFactory.getNewPosition(1, 2);
+            ChessPosition knightPosition = TestFactory.getNewPosition(5, 4);
+            ChessPosition rookPosition = TestFactory.getNewPosition(3, 8);
 
             //add to board
             board.addPiece(pawnPosition, pawn);
@@ -1001,7 +1001,7 @@ public class ChessGameTests {
 
             //check king moves
             game.setBoard(board);
-            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(kingPosition));
+            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(kingPosition));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
 
@@ -1035,7 +1035,7 @@ public class ChessGameTests {
          */
 
             ChessPiece king = TestFactory.getNewPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-            ChessPositionImpl position = TestFactory.getNewPosition(2, 6);
+            ChessPosition position = TestFactory.getNewPosition(2, 6);
 
             board.addPiece(position, king);
 
@@ -1051,7 +1051,7 @@ public class ChessGameTests {
             validMoves.add(TestFactory.getNewMove(position, TestFactory.getNewPosition(2, 7), null));
 
             game.setBoard(board);
-            Set<ChessMoveImpl> gameMoves = new HashSet<>(game.validMoves(position));
+            Set<ChessMove> gameMoves = new HashSet<>(game.validMoves(position));
             Assertions.assertEquals(validMoves, gameMoves,
                     "ChessGame validMoves did not return the correct moves");
         }

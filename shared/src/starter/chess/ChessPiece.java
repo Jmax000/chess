@@ -22,6 +22,8 @@ public interface ChessPiece {
         PAWN
     }
 
+    //public PieceType pieceType;
+
     /**
      * @return Which team this chess piece belongs to
      */
@@ -39,5 +41,5 @@ public interface ChessPiece {
      * 
      * @return Collection of valid moves
      */
-    Collection<ChessMoveImpl> pieceMoves(ChessBoard board, ChessPositionImpl myPosition);
+    Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
 }

@@ -21,9 +21,7 @@ public class ChessClient
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
-
-    record GameState(int gameID, ChessGame.TeamColor teamColor) {}
-    private GameState inGameState;
+    public GameState inGameState;
     public State state = State.SIGNED_OUT;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler)
@@ -54,7 +52,7 @@ public class ChessClient
                 yield switch (cmd)
                 {
                     case "create" -> createGame(params);
-                    case "join", "observe" -> joinGameHTTP(params);
+                    case "join", "observe" -> joinGame(params);
                     case "list" -> listGame();
                     case "logout" -> logout();
                     case "help" -> help();
@@ -64,7 +62,6 @@ public class ChessClient
             case IN_GAME:
                 yield switch (cmd)
                 {
-                    case "join" -> joinGameWS(params);
                     case "draw_board", "draw" -> drawBoard();
                     case "highlight_moves", "highlight" -> highlightMoves(params);
                     case "resign" -> resign();
@@ -183,7 +180,8 @@ public class ChessClient
         }
         throw new ResponseException(400, "No game found. Try again.");
     }
-    public String joinGameHTTP(String[] params) throws ResponseException
+
+    public String joinGame(String[] params) throws ResponseException
     {
         JoinGameRequest request = new JoinGameRequest();
         JoinGameResult result = null;
@@ -204,36 +202,9 @@ public class ChessClient
 
         if (game != null && result != null)
         {
-            StringBuilder gameJoined = new StringBuilder();
-            gameJoined.append("Joined ");
-            gameJoined.append(game.getGameName());
-            gameJoined.append(" as ");
-            if (request.getPlayerColor() == null || request.getPlayerColor().isEmpty())
-            {
-                state = State.OBSERVING;
-                gameJoined.append("an observer.");
-            }
-            else
-            {
-                state = State.IN_GAME;
-                gameJoined.append(request.getPlayerColor());
-                gameJoined.append(".");
-            }
-
             ws = new WebSocketFacade(serverUrl, notificationHandler);
-            inGameState = new GameState(request.getGameID(), null);
-
-            return gameJoined.toString();
-        }
-        throw new ResponseException(400, "Expected: <ID> [WHITE | BLACK | <empty>]");
-    }
-
-    public String joinGameWS(String[] params) throws ResponseException
-    {
-        if (params.length == 1)
-        {
             ChessGame.TeamColor color = null;
-            String team = params[0];
+            String team = request.getPlayerColor();
             if (team != null)
             {
                 color = switch (team.toLowerCase())
@@ -246,24 +217,27 @@ public class ChessClient
 
             if (team == null)
             {
+                state = State.OBSERVING;
+                inGameState = new GameState(request.getGameID(), null);
                 UserGameCommand command = new UserGameCommand(authtoken);
-                command.setGameID(inGameState.gameID);
+                command.setGameID(request.getGameID());
                 command.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
                 ws.sendMessage(command);
                 return "";
             }
             else if (color != null)
             {
-                inGameState = new GameState(inGameState.gameID, color);
+                state = State.IN_GAME;
+                inGameState = new GameState(request.getGameID(), color);
                 UserGameCommand command = new UserGameCommand(authtoken);
-                command.setGameID(inGameState.gameID);
+                command.setGameID(request.getGameID());
                 command.setTeamColor(color);
                 command.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
                 ws.sendMessage(command);
                 return "";
             }
         }
-        throw new ResponseException(400, "Expected: [WHITE | BLACK | <empty>]");
+        throw new ResponseException(400, "Expected: <ID> [WHITE | BLACK | <empty>]");
     }
 
     String makeMove(String cmd) throws ResponseException
@@ -350,6 +324,7 @@ public class ChessClient
     {
         UserGameCommand command = new UserGameCommand(authtoken);
         command.setGameID(inGameState.gameID);
+        command.setTeamColor(inGameState.teamColor);
         command.setCommandType(UserGameCommand.CommandType.RESIGN);
         ws.sendMessage(command);
 
@@ -403,7 +378,6 @@ public class ChessClient
         {
 
             return """
-            - join [WHITE | BLACK | <empty>]
             - <YOUR_MOVE>
             - instructions
             - resign

@@ -25,12 +25,12 @@ public class TestFactory {
         else { return new Pawn(pieceColor); }
     }
 
-    public static ChessPositionImpl getNewPosition(Integer row, Integer col)
+    public static ChessPosition getNewPosition(Integer row, Integer col)
     {
         return new ChessPositionImpl(row - 1, col - 1);
     }
 
-    public static ChessMoveImpl getNewMove(ChessPositionImpl startPosition, ChessPositionImpl endPosition, ChessPiece.PieceType promotionPiece)
+    public static ChessMove getNewMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece)
     {
 		return new ChessMoveImpl(startPosition, endPosition, promotionPiece);
     }

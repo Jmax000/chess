@@ -1,7 +1,11 @@
 package websocket;
 
 import adapters.GameAdapter;
+import adapters.MoveAdapter;
+import adapters.PositionAdapter;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import exception.ResponseException;
@@ -36,6 +40,8 @@ public class WebSocketFacade extends Endpoint
                 {
                     var builder = new GsonBuilder();
                     builder.registerTypeAdapter(ChessGame.class, new GameAdapter());
+                    builder.registerTypeAdapter(ChessPosition.class, new PositionAdapter());
+                    builder.registerTypeAdapter(ChessMove.class, new MoveAdapter());
                     ServerMessage notification = builder.create().fromJson(message, ServerMessage.class);
                     notificationHandler.notify(notification);
                 }

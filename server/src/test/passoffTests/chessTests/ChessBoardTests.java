@@ -1,9 +1,6 @@
 package passoffTests.chessTests;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPositionImpl;
+import chess.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +20,7 @@ public class ChessBoardTests {
     @Test
     @DisplayName("Add and Get Piece")
     public void getAddPiece() {
-        ChessPositionImpl position = TestFactory.getNewPosition(4, 4);
+        ChessPosition position = TestFactory.getNewPosition(4, 4);
         ChessPiece piece = TestFactory.getNewPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
 
         board.addPiece(position, piece);

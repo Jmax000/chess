@@ -26,10 +26,7 @@ public class ConnectionManager {
     public void remove(int gameID, Session session)
     {
         Vector<Connection> connections = connectedGames.get(gameID);
-        if (connections != null)
-        {
-            connections.remove(session);
-        }
+        connections.removeIf(c -> c.session == session);
     }
 
     public void notify(int gameID, ServerMessage notification) throws IOException
@@ -53,23 +50,6 @@ public class ConnectionManager {
             if (c.session.isOpen())
             {
                 if (c.session != exclude)
-                {
-                    c.send(new Gson().toJson(notification));
-                }
-            }
-            else
-            {
-                connections.remove(c);
-            }
-        }
-    }
-    public void notifyTeam(int gameID, ChessGame.TeamColor notify, ServerMessage notification) throws IOException
-    {
-        Vector<Connection> connections = connectedGames.get(gameID);
-        for (var c : connections) {
-            if (c.session.isOpen())
-            {
-                if (c.teamColor == notify)
                 {
                     c.send(new Gson().toJson(notification));
                 }
